@@ -1,0 +1,11 @@
+id: r-ta-idme
+kind: press_or_agency_statement
+url: https://www.irs.gov/trumpaccounts
+archived: ""   # TODO(snapshot.py, Phase 5)
+retrieved: 2026-06-12
+basis: >
+  IRS Trump Accounts guidance: to establish an initial Trump account, the taxpayer signs in to
+  their IRS Online Account — which uses ID.me identity verification — and submits Form 4547.
+  ID.me is therefore the identity-proofing operator on the intake path. (Observed via agency
+  guidance rather than direct page inspection: form.trumpaccounts.gov 301-redirects to
+  irs.gov/trumpaccounts and the account flow is app/SPA-based.)

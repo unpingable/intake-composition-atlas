@@ -1,0 +1,11 @@
+id: r-ta-treasury-pr
+kind: press_or_agency_statement
+url: https://home.treasury.gov/news/press-releases/sb0508
+archived: ""   # TODO(snapshot.py, Phase 5)
+retrieved: 2026-06-12
+basis: >
+  Treasury press release "Treasury Announces the Launch of the Trump Accounts App and Next
+  Steps for Trump Accounts" (sb0508). Families open accounts by filing IRS Form 4547 on
+  TrumpAccounts.gov; Treasury operates the Trump Accounts app; activation emails come only from
+  no-reply@TrumpAccounts.Treasury.gov; Treasury deposits the one-time $1,000 contribution into
+  eligible children's accounts beginning July 4, 2026.

@@ -1,0 +1,26 @@
+# FAILURE FIXTURE — expects rule DOCUMENTED_NEEDS_WITNESS.
+# signed_is_not_witnessed: an EO authorizes a flow; it does not witness one.
+# A `documented` edge whose only basis is an EO must be downgraded to authorized.
+case_id: fail-eo-as-documented
+title: "EO cited as basis for a documented flow"
+status: emerging
+date_surfaced: 2026-06-12
+receipts_inline:
+  - id: r-eo
+    kind: eo
+    url: https://example.gov/eo/silos
+    retrieved: 2026-06-01
+    basis: "EO directs agencies to eliminate information silos and share intake data"
+nodes:
+  - { id: sor-a, type: system_of_record, label: "SOR A" }
+  - { id: agency-b, type: agency, label: "Agency B" }
+edges:
+  - id: e-bad-3
+    type: shares_with
+    from: sor-a
+    to: agency-b
+    claim: documented   # <-- violation: only receipt is an EO (authorize, not witness)
+    receipts: [r-eo]
+    contestation:
+      notice: none_identified
+      appeal: none_identified

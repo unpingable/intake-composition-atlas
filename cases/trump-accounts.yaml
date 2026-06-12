@@ -1,0 +1,107 @@
+case_id: trump-accounts
+title: "TrumpAccounts.gov / Form 4547 — child + guardian intake into the Treasury TAP system of records"
+status: active
+date_surfaced: 2026-06-12
+# Editorial framing (reader-facing; the headline/dek lead the explainer, the doctrine lives below).
+headline: "How a child-savings form becomes a joinable government record"
+dek: >
+  Documented records show TrumpAccounts.gov and IRS Form 4547 collecting a child's and a
+  guardian's identity — including both Social Security numbers — and routing them into a Treasury
+  system of record that drives pilot-eligibility and oversight decisions.
+why: >
+  These are not just values. They are join keys: stable identifiers and relationship fields that
+  can link a child, a household, a tax filer, benefit eligibility, and account administration into
+  one composable record.
+summary: >
+  TrumpAccounts.gov collects child and parent/guardian identity (including both SSNs) via IRS
+  Form 4547 to open a Trump account (a § 530A IRA) and elect a one-time $1,000 Treasury pilot
+  contribution. Intake is identity-proofed through ID.me and lands in Treasury's ".031 — Trump
+  Accounts Program (TAP)" Privacy Act system of records, which exists for administration,
+  oversight, and compliance. The statute directs Treasury to disburse the $1,000, but no public
+  document witnesses how the eligibility records move IRS→Treasury or are matched against SSA —
+  so those edges are AUTHORIZED, not documented. The composed parent↔child identity linkage is
+  an inferred household graph.
+
+nodes:
+  # Optional cartographic fields: short_label (canvas recognition label; full label lives in the
+  # side panel) and lane (semantic stage; overrides the type->lane default in build.py). Position
+  # encodes WHERE a claim sits in the machine; edge styling encodes HOW strong the claim is.
+  - { id: portal-trump-accounts, type: portal, label: "TrumpAccounts.gov", short_label: "TrumpAccounts.gov", agency: agency-irs }
+  - { id: form-4547, type: form, label: "Form 4547 — Trump Account Election(s) (OMB 1545-2336)", short_label: "Form 4547" }
+  - { id: instrument-6434, type: instrument, label: "IRC § 6434 / § 530A (§ 70204, P.L. 119-21)", short_label: "IRC § 6434 / § 530A" }
+  - { id: agency-irs, type: agency, label: "Internal Revenue Service", short_label: "IRS" }
+  - { id: agency-treasury, type: agency, label: "U.S. Department of the Treasury", short_label: "Treasury" }
+  - { id: op-idme, type: operator, label: "ID.me (identity proofing)", short_label: "ID.me" }
+  - { id: sor-tap, type: system_of_record, label: "Treasury .031 — Trump Accounts Program (TAP)", short_label: "Treasury TAP system" }
+  - { id: fc-child-ssn, type: field_class, label: "Child SSN", short_label: "Child SSN" }
+  - { id: fc-child-identity, type: field_class, label: "Child identity (name, relationship, address)", short_label: "Child identity" }
+  - { id: fc-guardian-identity, type: field_class, label: "Parent/guardian identity (name, SSN/ITIN, address)", short_label: "Parent/guardian" }
+  - { id: fc-citizenship, type: field_class, label: "Child citizenship / eligibility attestation", short_label: "Citizenship" }
+  - { id: ds-eligibility, type: decision_surface, label: "Pilot-program eligibility determination", short_label: "Pilot eligibility" }
+  - { id: ds-compliance, type: decision_surface, label: "Program oversight / compliance / integrity", short_label: "Oversight / compliance" }
+  - { id: attr-household, type: field_class, label: "Derived household / parent-child linkage", short_label: "Household linkage", lane: inference }
+  # external_consumer nodes intentionally absent in v1 — the empty region is the finding.
+
+edges:
+  # --- documented collections (Form 4547 instructions witness exactly these fields) ---
+  - { id: e-collect-guardian, type: collects, from: form-4547, to: fc-guardian-identity, claim: documented, receipts: [r-ta-form, r-ta-icr] }
+  - { id: e-collect-child-ssn, type: collects, from: form-4547, to: fc-child-ssn, claim: documented, receipts: [r-ta-form] }
+  - { id: e-collect-child-id, type: collects, from: form-4547, to: fc-child-identity, claim: documented, receipts: [r-ta-form] }
+  - { id: e-collect-citizenship, type: collects, from: form-4547, to: fc-citizenship, claim: documented, receipts: [r-ta-form, r-ta-prop-reg] }
+
+  # --- documented operation + intake landing ---
+  - { id: e-idme-operates, type: operates, from: op-idme, to: portal-trump-accounts, claim: documented, receipts: [r-ta-idme] }
+  - { id: e-feeds-tap, type: feeds, from: form-4547, to: sor-tap, claim: documented, receipts: [r-ta-sorn, r-ta-treasury-pr] }
+
+  # --- authorization edges (instrument permits; one targets a downstream edge) ---
+  - { id: e-auth-portal, type: authorizes, from: instrument-6434, to: portal-trump-accounts, claim: authorized, receipts: [r-ta-statute] }
+  - { id: e-auth-disburse, type: authorizes, from: instrument-6434, to: e-share-disburse, claim: authorized, receipts: [r-ta-statute] }
+
+  # --- WORKED EXAMPLE (see METHODOLOGY.md): the instinct is `documented` (Treasury
+  #     obviously pays), but the only basis is the statute directing payment. signed_is_not_
+  #     witnessed forces `authorized` — no public document witnesses the IRS->Treasury record
+  #     flow itself. Setting claim: documented here trips DOCUMENTED_NEEDS_WITNESS in the linter.
+  - id: e-share-disburse
+    type: shares_with
+    from: sor-tap
+    to: agency-treasury
+    claim: authorized
+    receipts: [r-ta-statute]
+    contestation:
+      notice: "SORN .031 states an administration/oversight purpose; no individualized notice of the record flow that drives disbursement"
+      appeal: none_identified
+
+  # --- documented decision surfaces (SORN + proposed rule witness the purposes) ---
+  - id: e-consume-eligibility
+    type: consumed_by
+    from: sor-tap
+    to: ds-eligibility
+    claim: documented
+    receipts: [r-ta-prop-reg]
+    contestation:
+      notice: "Eligibility criteria published in the proposed rule and SORN"
+      appeal: "a subject may correct their own record, but no process targets the composed eligibility determination"
+  - id: e-consume-compliance
+    type: consumed_by
+    from: sor-tap
+    to: ds-compliance
+    claim: documented
+    receipts: [r-ta-sorn]
+    contestation:
+      notice: "SORN .031 names oversight, compliance, and integrity as system purposes"
+      appeal: none_identified
+
+inference_layer:
+  # Composition of three documented collections yields a parent<->child household linkage that
+  # the intake never names as a collected field. Depth-1: all parents are documented.
+  - id: e-infer-household
+    type: enables_inference
+    from: fc-child-ssn
+    to: attr-household
+    claim: inferred
+    receipts: [r-ta-form]
+    derivation: [e-collect-guardian, e-collect-child-ssn, e-collect-child-id]
+    notes: >
+      Linking a guardian SSN/ITIN to a child SSN on a single election form composes a
+      household/parent-child graph keyed by SSN — derivable from the documented collections,
+      not itself a disclosed flow.

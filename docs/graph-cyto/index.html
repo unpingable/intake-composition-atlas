@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Composition Graph — Intake Composition Atlas</title>
+  <meta name="description" content="What is proven, what is permitted, what is possible — edge by edge.">
+  <script src="https://unpkg.com/cytoscape@3.30.2/dist/cytoscape.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+    :root {
+      --bg: #08090b; --panel: #0d0f13; --line: #1d2026; --muted: #6b7280; --text: #d6dae0;
+      --documented: #4fc3f7; --authorized: #f5a623; --inferred: #c08bff; --speculative: #5a6068;
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg); color: var(--text); }
+
+    /* viewport-filling grid: header / graph / drawer */
+    .page { display: grid; grid-template-rows: auto 1fr auto; width: 100vw; height: 100vh; }
+
+    header { padding: 12px 22px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    header a.back { color: var(--muted); text-decoration: none; font-size: 13px; }
+    header a.back:hover { color: var(--text); }
+    header h1 { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -0.01em; margin-right: 4px; }
+    header .sub { font-size: 12.5px; color: var(--muted); }
+    header .spacer { flex: 1; }
+    .lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #555b63; }
+    .toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; color: #aeb4bc; cursor: pointer; user-select: none;
+      padding: 5px 11px 5px 9px; border: 1px solid var(--line); border-radius: 999px; background: #0e1014; transition: background .15s, border-color .15s, color .15s; }
+    .toggle:hover { background: #14171c; }
+    .toggle .swatch { width: 18px; height: 0; border-top-width: 2.5px; border-top-style: solid; border-radius: 2px; }
+    .toggle.documented .swatch { border-color: var(--documented); }
+    .toggle.authorized .swatch { border-color: var(--authorized); border-top-style: dashed; }
+    .toggle.inferred   .swatch { border-color: var(--inferred); border-top-style: dotted; }
+    .toggle.speculative .swatch { border-color: var(--speculative); border-top-style: dotted; }
+    .toggle input { display: none; }
+    .toggle.on { color: #fff; }
+    .toggle.documented.on { border-color: #2b5566; background: #0c1a20; }
+    .toggle.authorized.on { border-color: #5a4516; background: #1c1407; }
+    .toggle.inferred.on   { border-color: #4a3a66; background: #160e22; }
+    .toggle.speculative.on{ border-color: #33383f; background: #14161a; }
+    .btn { font-size: 12px; color: #aeb4bc; background: #0e1014; border: 1px solid var(--line); border-radius: 6px; padding: 5px 11px; cursor: pointer; }
+    .btn:hover { background: #14171c; color: #fff; }
+
+    .stage { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
+    #cy { position: absolute; inset: 0;
+      background:
+        radial-gradient(1200px 700px at 30% 16%, #14171d 0%, rgba(20,23,29,0) 60%),
+        linear-gradient(#08090b, #060708); }
+    #cy::before { content:''; position:absolute; inset:0; pointer-events:none;
+      background-image: radial-gradient(rgba(255,255,255,0.025) 1px, transparent 1px); background-size: 28px 28px; }
+
+    /* ---- bottom drawer: GUIDE by default, selection fills in on click ---- */
+    .drawer { background: var(--panel); border-top: 1px solid var(--line); height: 224px;
+      transition: height .22s ease; display: flex; flex-direction: column; min-height: 0; }
+    .drawer.collapsed { height: 44px; }
+    .drawer-bar { display: flex; align-items: center; gap: 12px; padding: 0 22px; height: 44px; flex-shrink: 0; cursor: pointer; }
+    .drawer-bar .grip { width: 34px; height: 4px; border-radius: 3px; background: #2a2f37; }
+    .drawer-bar .title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em; color: #7a828c; font-weight: 700; }
+    .drawer-bar .count { font-size: 12px; color: #5b626b; font-variant-numeric: tabular-nums; }
+    .drawer-bar .chev { margin-left: auto; color: #5b626b; font-size: 13px; transition: transform .2s; }
+    .drawer.collapsed .drawer-bar .chev { transform: rotate(180deg); }
+    .drawer-body { display: flex; gap: 28px; padding: 4px 22px 20px; overflow: auto; flex: 1; min-height: 0; }
+    .drawer.collapsed .drawer-body { display: none; }
+
+    .col h4 { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: #555b63; margin-bottom: 9px; }
+    .col-guide { flex: 0 0 410px; }
+    .col-types { flex: 0 0 230px; }
+    .col-sel   { flex: 1; min-width: 0; border-left: 1px solid var(--line); padding-left: 26px; }
+    .steps { list-style: none; counter-reset: s; }
+    .steps li { counter-increment: s; position: relative; padding: 5px 0 5px 26px; font-size: 12.5px; color: #aab0b8; line-height: 1.5; border-radius: 5px; transition: background .15s; }
+    .steps li::before { content: counter(s); position: absolute; left: 0; top: 5px; width: 17px; height: 17px; border-radius: 50%;
+      background: #15181d; border: 1px solid var(--line); color: #6b7280; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .steps li b { color: #d6dae0; font-weight: 600; }
+    .steps li.hl { background: #15181d; }
+    .steps li.hl::before { border-color: #4a5159; color: #cfd5dc; }
+    .ln { display: inline-block; width: 22px; height: 0; border-top-width: 2.5px; vertical-align: middle; margin-right: 2px; }
+    .ln.doc { border-top: 2.5px solid var(--documented); }
+    .ln.auth { border-top: 2.5px dashed var(--authorized); }
+    .ln.inf { border-top: 2.5px dotted var(--inferred); }
+    .types .row { display: flex; align-items: center; gap: 8px; margin: 5px 0; color: #9aa0a8; font-size: 12px; }
+    .types .chip { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; border: 1px solid; }
+
+    .sel-placeholder { color: #6b7280; font-size: 13px; line-height: 1.6; }
+    .badge { display: inline-block; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 9px; border-radius: 4px; margin-bottom: 10px; }
+    .badge.documented { background: #08222e; color: var(--documented); }
+    .badge.authorized { background: #241902; color: var(--authorized); }
+    .badge.inferred   { background: #1a1030; color: var(--inferred); }
+    .badge.speculative{ background: #15171b; color: #8b929b; }
+    .sel h2 { font-size: 16px; color: #fff; margin-bottom: 5px; font-weight: 600; }
+    .sel .plain { font-size: 13px; color: #c4cad2; line-height: 1.55; margin-bottom: 6px; }
+    .sel .why { font-size: 12.5px; color: #8b929b; line-height: 1.55; margin-bottom: 12px; }
+    .sel .why b { color: #aab0b8; font-weight: 600; }
+    .sel-grid { display: flex; gap: 24px; align-items: flex-start; }
+    .sel-meta { flex: 0 0 300px; }
+    .sel-receipts { flex: 1; min-width: 0; }
+    .field { margin-bottom: 11px; }
+    .field .k { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.09em; color: #5b626b; margin-bottom: 4px; }
+    .field .v { font-size: 12.5px; color: #d2d7dd; line-height: 1.55; }
+    .authby { display:inline-block; font-size: 11px; color: var(--authorized); background: #1c1407; border:1px solid #5a4516; border-radius: 5px; padding: 3px 8px; }
+    .contest { border-left: 2px solid var(--authorized); padding-left: 10px; }
+    .contest strong { color: #c6ccd4; font-weight: 600; }
+    .receipt-row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; }
+    .receipt { flex: 0 0 290px; background: #0c0e12; border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+    .receipt .kind { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--authorized); margin-bottom: 6px; }
+    .receipt .basis { font-size: 11.5px; color: #aeb4bc; line-height: 1.55; margin-bottom: 8px; }
+    .receipt a { font-size: 11px; color: var(--documented); word-break: break-all; text-decoration: none; }
+    .receipt a:hover { text-decoration: underline; }
+    .receipt .ret { font-size: 10.5px; color: #5b626b; margin-top: 4px; }
+    @media (max-width: 900px) { .col-types { display: none; } .drawer { height: 40vh; } }
+    @media (max-width: 680px) { .col-guide { flex-basis: 240px; } .sel-grid { flex-direction: column; } .sel-meta { flex: none; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <a class="back" href="../">&larr; Atlas</a>
+      <h1>Composition Graph</h1>
+      <span class="sub">Position = stage in the machine · line = claim strength.</span>
+      <span class="spacer"></span>
+      <span class="lbl">Layers</span>
+      <label class="toggle documented on"><span class="swatch"></span><input type="checkbox" data-claim="documented" checked>Documented</label>
+      <label class="toggle authorized"><span class="swatch"></span><input type="checkbox" data-claim="authorized">Authorized</label>
+      <label class="toggle inferred"><span class="swatch"></span><input type="checkbox" data-claim="inferred">Inferred</label>
+      <label class="toggle speculative"><span class="swatch"></span><input type="checkbox" data-claim="speculative">Speculative</label>
+      <button class="btn" id="fit">Fit</button>
+    </header>
+
+    <div class="stage"><div id="cy"></div></div>
+
+    <div class="drawer" id="drawer">
+      <div class="drawer-bar" id="bar">
+        <span class="grip"></span>
+        <span class="title">Guide</span>
+        <span class="count" id="count"></span>
+        <span class="chev" id="chev">▾</span>
+      </div>
+      <div class="drawer-body">
+        <div class="col col-guide">
+          <h4>How to read this map</h4>
+          <ol class="steps" id="steps">
+            <li data-gk="intro">Read <b>left → right</b>: data moves through stages — authority, intake, collection, data, custody, then to decision surfaces.</li>
+            <li data-gk="documented"><span class="ln doc"></span> <b>Solid cyan</b> = documented: a public record says this flow exists.</li>
+            <li data-gk="authorized"><span class="ln auth"></span> <b>Dashed amber</b> = authorized: a law permits it; no public evidence it happens. Faint amber is an authorization note, not a data flow.</li>
+            <li data-gk="inferred"><span class="ln inf"></span> <b>Dotted purple</b> = inferred: composition makes it derivable, though no one disclosed it.</li>
+            <li data-gk="click">Click any <b>box</b> or <b>line</b> for a plain-language explanation and its receipts. Hover a box to isolate its connections.</li>
+          </ol>
+        </div>
+        <div class="col col-types">
+          <h4>Node types</h4>
+          <div class="types" id="types"></div>
+        </div>
+        <div class="col col-sel">
+          <h4>Selection</h4>
+          <div id="selection"><div class="sel-placeholder">Nothing selected. Click a box or line in the map to see what it is, why it matters, and the public records behind it.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  const NODE = {
+    portal:            { c:'#4fc3f7', label:'Portal',            what:'A public website where people hand over information.', why:'The front door — what is typed here begins every downstream join.' },
+    form:              { c:'#7aa2ff', label:'Form',              what:'An official collection form (with an OMB control number).', why:'Defines exactly which categories of data are gathered.' },
+    instrument:        { c:'#f5a623', label:'Instrument',        what:'A law, statute, or executive order.', why:'It permits collection and sharing — but permission is not proof a flow happens.' },
+    field_class:       { c:'#5bbf6a', label:'Field class',       what:'A category of data collected — not a real value.', why:'Field classes are the joinable keys (SSNs, identities) that let separate records be linked.' },
+    system_of_record:  { c:'#ef5350', label:'System of record',  what:'A government database of record.', why:'Where intake lands and is retained; sharing and matching happen from here.' },
+    agency:            { c:'#c6ccd4', label:'Agency',            what:'A government body.', why:'Agencies send and receive data across boundaries the public cannot see.' },
+    operator:          { c:'#c08bff', label:'Operator',          what:'A private contractor running part of the surface.', why:'Custody passes through vendors — e.g. identity proofing.' },
+    decision_surface:  { c:'#fbc02d', label:'Decision surface',  what:'A decision made using the data.', why:'Eligibility, compliance, enforcement — where the composed record acts on you.' },
+    external_consumer: { c:'#5fd0bf', label:'External consumer', what:'A non-federal recipient (state, insurer, broker).', why:'Where claim discipline is hardest. Empty here by design.' },
+  };
+  const CLAIM = { documented:'#4fc3f7', authorized:'#f5a623', inferred:'#c08bff', speculative:'#5a6068' };
+  const CLAIM_HELP = {
+    documented: 'A public record says this flow actually exists.',
+    authorized: 'A law permits this; there is no public evidence it actually happens.',
+    inferred:   'Composition makes this derivable — not disclosed, not authorized as such.',
+    speculative:'Plausible under incentive analysis only.',
+  };
+  const EDGE_VERB = { collects:'collects', feeds:'sends intake into', operates:'runs', shares_with:'discloses records to',
+    matches_against:'cross-matches records with', consumed_by:'is used to drive', authorizes:'permits', enables_inference:'composes into' };
+  const GK_FOR_CLAIM = { documented:'documented', authorized:'authorized', inferred:'inferred', speculative:'inferred' };
+  const LANE_LABELS = { authority:'Authority', intake:'Intake', collection:'Collection', data:'Collected data',
+    custody:'Custody', inference:'Composition / inference', decision:'Decision surface', external:'External power' };
+  const LANE_W = 300, ROW_H = 92, FIRST_Y = 120;
+
+  let cy, laneHeaderIds = [], shortById = {};
+  const active = new Set(['documented']);
+  const isReal = el => !el.data('laneHeader');
+  const vis = e => isReal(e) && active.has(e.data('claim'));
+
+  function computePositions(nodes) {
+    const byLane = {};
+    nodes.forEach(n => { (byLane[n.data.lane] ||= []).push(n.data.id); });
+    const maxCount = Math.max(1, ...Object.values(byLane).map(a => a.length));
+    const center = FIRST_Y + (maxCount - 1) / 2 * ROW_H;
+    const pos = {};
+    Object.entries(byLane).forEach(([lane, ids]) => {
+      ids.forEach((id, i) => {
+        const rank = nodes.find(n => n.data.id === id).data.rank;
+        pos[id] = { x: rank * LANE_W, y: center + (i - (ids.length - 1) / 2) * ROW_H };
+      });
+    });
+    return { pos, headerY: FIRST_Y - ROW_H * 0.95, lanesPresent: byLane };
+  }
+
+  // Refit is intentional and rare (load / Fit / layer change). Resize never refits.
+  function readableFit() {
+    if (!cy) return;
+    cy.resize(); cy.fit(cy.nodes(), 70);
+    const z = cy.zoom();
+    if (z > 1.25) { cy.zoom(1.25); cy.center(cy.nodes()); }
+    else if (z < 0.78) { cy.zoom(0.85); cy.center(cy.nodes()); }
+  }
+
+  function applyLayers() {
+    cy.batch(() => {
+      cy.edges().forEach(e => e.style('display', vis(e) ? 'element' : 'none'));
+      cy.nodes().forEach(n => { if (!n.data('laneHeader')) n.style('display', n.connectedEdges().some(vis) ? 'element' : 'none'); });
+      laneHeaderIds.forEach(hid => {
+        const h = cy.getElementById(hid); const lane = h.data('lane');
+        const anyVisible = cy.nodes().some(n => isReal(n) && n.data('lane') === lane && n.style('display') !== 'none');
+        h.style('display', anyVisible ? 'element' : 'none');
+      });
+    });
+    const ve = cy.edges().filter(vis).length;
+    const vn = cy.nodes().filter(n => isReal(n) && n.style('display') !== 'none').length;
+    document.getElementById('count').textContent = `${vn} nodes · ${ve} edges`;
+  }
+
+  function esc(s){ return String(s==null?'':s).replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+  function clearFocus(){ cy.elements().removeClass('faded focus'); }
+  function focusNode(n){
+    if (n.data('laneHeader')) return;
+    const hood = n.closedNeighborhood();
+    cy.batch(() => { cy.elements().filter(isReal).addClass('faded'); hood.removeClass('faded').addClass('focus'); });
+  }
+
+  function highlightStep(gk) {
+    document.querySelectorAll('#steps li').forEach(li => li.classList.toggle('hl', li.dataset.gk === gk));
+    const el = document.querySelector(`#steps li[data-gk="${gk}"]`);
+    if (el) el.scrollIntoView({ block:'nearest', behavior:'smooth' });
+  }
+  function clearSelection() {
+    document.querySelectorAll('#steps li').forEach(li => li.classList.remove('hl'));
+    document.getElementById('selection').innerHTML =
+      '<div class="sel-placeholder">Nothing selected. Click a box or line in the map to see what it is, why it matters, and the public records behind it.</div>';
+  }
+
+  function showEdge(e) {
+    const d = e.data();
+    if (document.getElementById('drawer').classList.contains('collapsed')) toggleDrawer(true);
+    const sName = shortById[d.source] || d.source, tName = shortById[d.target] || d.target;
+    const verb = EDGE_VERB[d.type] || d.type.replace(/_/g,' ');
+    const receipts = (d.receipts||[]).map(r => `
+      <div class="receipt">
+        <div class="kind">${esc(r.kind||'receipt')}</div>
+        <div class="basis">${esc(r.basis||'')}</div>
+        ${r.url ? `<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.url)}</a>` : ''}
+        <div class="ret">retrieved ${esc(r.retrieved||'—')}${r.archived ? ' · <a href="'+esc(r.archived)+'" target="_blank" rel="noopener">archived</a>' : ''}</div>
+      </div>`).join('');
+    const authBy = d.authorized_by_label ? `<div class="field"><div class="k">Authorized by</div><div class="v"><span class="authby">${esc(d.authorized_by_label)}</span></div></div>` : '';
+    const deriv = (d.derivation && d.derivation.length) ? `<div class="field"><div class="k">Derivation (parent edges)</div><div class="v">${d.derivation.map(esc).join(', ')}</div></div>` : '';
+    const contest = d.contestation ? `<div class="field"><div class="k">Contestation</div>
+        <div class="v contest"><strong>Notice:</strong> ${esc(d.contestation.notice)}<br><strong>Appeal:</strong> ${esc(d.contestation.appeal)}</div></div>` : '';
+    document.getElementById('selection').innerHTML = `
+      <div class="sel">
+        <span class="badge ${esc(d.claim)}">${esc(d.claim)}</span>
+        <h2>${esc(sName)} <span style="color:#5b626b;font-weight:400">${esc(verb)}</span> ${esc(tName)}</h2>
+        <div class="plain">${esc(CLAIM_HELP[d.claim]||'')}</div>
+        <div class="sel-grid">
+          <div class="sel-meta">${authBy}${deriv}${contest}</div>
+          <div class="sel-receipts">
+            <div class="field"><div class="k">Receipts (${(d.receipts||[]).length})</div></div>
+            <div class="receipt-row">${receipts}</div>
+          </div>
+        </div>
+      </div>`;
+    highlightStep(GK_FOR_CLAIM[d.claim] || 'click');
+  }
+
+  function showNode(n) {
+    if (n.data('laneHeader')) return;
+    const d = n.data();
+    if (document.getElementById('drawer').classList.contains('collapsed')) toggleDrawer(true);
+    const t = NODE[d.type] || { label:d.type, c:'#888', what:'', why:'' };
+    document.getElementById('selection').innerHTML = `
+      <div class="sel">
+        <span class="badge" style="background:#14171c;color:${t.c}">${esc(t.label)}</span>
+        <h2>${esc(d.label)}</h2>
+        <div class="plain">${esc(t.what)}</div>
+        <div class="why"><b>Why it matters:</b> ${esc(t.why)}</div>
+        <div class="field"><div class="k">Stage</div><div class="v">${esc(LANE_LABELS[d.lane]||d.lane)}</div></div>
+      </div>`;
+    highlightStep('click');
+  }
+
+  function toggleDrawer(open) {
+    const dr = document.getElementById('drawer');
+    const willOpen = open === undefined ? dr.classList.contains('collapsed') : open;
+    dr.classList.toggle('collapsed', !willOpen);
+  }
+
+  fetch('../data/graph.json').then(r => r.json()).then(data => {
+    data.nodes.forEach(n => { shortById[n.data.id] = n.data.short_label || n.data.label; });
+    const { pos, headerY, lanesPresent } = computePositions(data.nodes);
+    const headers = Object.keys(lanesPresent).map(lane => {
+      const rank = data.nodes.find(n => n.data.lane === lane).data.rank;
+      const id = '__lane_' + lane; laneHeaderIds.push(id);
+      return { data: { id, laneHeader: true, lane, label: (LANE_LABELS[lane]||lane).toUpperCase() },
+               position: { x: rank * LANE_W, y: headerY }, locked: true, grabbable: false, selectable: false };
+    });
+
+    cy = cytoscape({
+      container: document.getElementById('cy'),
+      elements: { nodes: data.nodes.concat(headers), edges: data.edges },
+      wheelSensitivity: 0.25,
+      layout: { name: 'preset', positions: n => pos[n.id()] || n.position(), fit: false },
+      style: [
+        { selector: 'node', style: {
+            'shape': 'round-rectangle',
+            'background-color': ele => (NODE[ele.data('type')]||{}).c || '#888',
+            'background-opacity': 0.14, 'border-width': 1.5,
+            'border-color': ele => (NODE[ele.data('type')]||{}).c || '#888',
+            'label': 'data(short_label)', 'color': '#eef1f5',
+            'font-size': 14, 'font-weight': 600, 'min-zoomed-font-size': 9,
+            'text-wrap': 'wrap', 'text-max-width': 150, 'text-valign': 'center', 'text-halign': 'center',
+            'line-height': 1.25, 'padding': '13px', 'width': 'label', 'height': 'label' } },
+        { selector: 'node[type="portal"], node[type="system_of_record"], node[type="decision_surface"]',
+          style: { 'border-width': 2.4, 'font-weight': 700, 'font-size': 15, 'text-max-width': 168 } },
+        { selector: 'node[type="decision_surface"]', style: { 'shape': 'round-tag' } },
+        { selector: 'node[?laneHeader]', style: {
+            'background-opacity': 0, 'border-width': 0, 'label': 'data(label)', 'color': '#5b646e',
+            'font-size': 12, 'font-weight': 700, 'min-zoomed-font-size': 7, 'text-valign': 'center',
+            'width': 1, 'height': 1, 'events': 'no' } },
+        { selector: 'edge', style: {
+            'width': 1.9, 'curve-style': 'taxi', 'taxi-direction': 'horizontal', 'taxi-turn': '45%', 'taxi-turn-min-distance': '16px',
+            'line-color': ele => CLAIM[ele.data('claim')] || '#888', 'target-arrow-color': ele => CLAIM[ele.data('claim')] || '#888',
+            'target-arrow-shape': 'triangle-backcurve', 'arrow-scale': 0.95, 'opacity': 0.9 } },
+        { selector: 'edge[claim="authorized"]', style: { 'line-style': 'dashed' } },
+        { selector: 'edge[claim="inferred"]',   style: { 'line-style': 'dashed', 'line-dash-pattern': [3,4], 'width': 2 } },
+        { selector: 'edge[claim="speculative"]', style: { 'line-style': 'dashed', 'line-dash-pattern': [2,5], 'opacity': 0.5 } },
+        { selector: 'edge[role="authorization"]', style: {
+            'curve-style': 'unbundled-bezier', 'control-point-distances': [-30], 'control-point-weights': [0.5],
+            'width': 1, 'line-style': 'dotted', 'line-color': '#5a4516', 'opacity': 0.4, 'target-arrow-shape': 'none' } },
+        { selector: '.faded', style: { 'opacity': 0.1, 'text-opacity': 0.1 } },
+        { selector: 'node.focus', style: { 'background-opacity': 0.24, 'border-width': 2.6 } },
+        { selector: 'edge:selected', style: { 'line-color': '#fff', 'target-arrow-color': '#fff', 'width': 2.8, 'opacity': 1 } },
+        { selector: 'node:selected', style: { 'border-color': '#fff', 'border-width': 2.8, 'background-opacity': 0.26 } },
+      ],
+    });
+
+    cy.on('tap', 'edge', evt => showEdge(evt.target));
+    cy.on('tap', 'node', evt => showNode(evt.target));
+    cy.on('mouseover', 'node', evt => focusNode(evt.target));
+    cy.on('mouseout', 'node', clearFocus);
+    cy.on('tap', evt => { if (evt.target === cy) { clearFocus(); clearSelection(); } });
+
+    buildTypes(data);
+    applyLayers();
+    readableFit();
+
+    // Resize the canvas on container changes — but NEVER rerun layout or refit here.
+    // (That loop was the flicker.) Refit is reserved for load / Fit / layer toggle.
+    let raf = 0;
+    const ro = new ResizeObserver(() => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => cy && cy.resize()); });
+    ro.observe(document.querySelector('.stage'));
+  });
+
+  function buildTypes(data) {
+    const present = [...new Set(data.nodes.map(n => n.data.type))].filter(t => NODE[t]);
+    const el = document.getElementById('types');
+    present.forEach(t => {
+      const row = document.createElement('div'); row.className = 'row';
+      row.innerHTML = `<span class="chip" style="background:${NODE[t].c}22;border-color:${NODE[t].c}"></span>${NODE[t].label}`;
+      el.appendChild(row);
+    });
+  }
+
+  document.querySelectorAll('.toggle input').forEach(cb => {
+    cb.addEventListener('change', () => {
+      cb.checked ? active.add(cb.dataset.claim) : active.delete(cb.dataset.claim);
+      cb.closest('.toggle').classList.toggle('on', cb.checked);
+      applyLayers(); readableFit();
+    });
+  });
+  document.getElementById('fit').addEventListener('click', readableFit);
+  document.getElementById('bar').addEventListener('click', () => { toggleDrawer(); });
+  </script>
+</body>
+</html>

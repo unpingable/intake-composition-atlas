@@ -1,0 +1,12 @@
+id: r-ta-sorn
+kind: sorn
+url: https://www.federalregister.gov/documents/2026/04/17/2026-07514/privacy-act-of-1974-system-of-records
+archived: ""   # TODO(snapshot.py, Phase 5)
+retrieved: 2026-06-12
+basis: >
+  Privacy Act SORN, "Department of the Treasury, .031 — Trump Accounts Program (TAP) System
+  of Records" (FR 2026-07514, Apr 17 2026). The system "supports the Treasury's
+  administration, oversight and compliance activities associated with Trump accounts," a type
+  of traditional IRA under 26 U.S.C. 530A; records "enable Treasury to administer and oversee
+  program operations, ensure compliance with applicable statutory requirements, and carry out
+  the objectives for Trump accounts."

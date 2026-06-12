@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Composition Graph — Intake Composition Atlas</title>
+  <meta name="description" content="How one federal intake form creates joinable identity records — a documented path with receipts.">
+  <link rel="stylesheet" href="https://unpkg.com/@xyflow/react@12.3.5/dist/style.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body, #root { margin: 0; width: 100%; height: 100%; overflow: hidden; }
+    :root {
+      --bg: #08090b; --panel: #0d0f13; --line: #1d2026; --muted: #6b7280; --text: #d6dae0;
+      --documented: #4fc3f7; --authorized: #f5a623; --inferred: #c08bff; --speculative: #5a6068;
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg); color: var(--text); }
+    .page { display: grid; grid-template-rows: auto auto 1fr auto; width: 100vw; height: 100vh; }
+
+    header { padding: 10px 22px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    header a.back { color: var(--muted); text-decoration: none; font-size: 13px; }
+    header a.back:hover { color: var(--text); }
+    header .brand { font-size: 12px; color: #5b626b; letter-spacing: 0.02em; }
+    header .spacer { flex: 1; }
+    .lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #555b63; }
+    .toggle { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: #aeb4bc; cursor: pointer; user-select: none;
+      padding: 5px 11px 5px 9px; border: 1px solid var(--line); border-radius: 999px; background: #0e1014; transition: background .15s, border-color .15s, color .15s; }
+    .toggle:hover { background: #14171c; }
+    .toggle .swatch { width: 16px; height: 0; border-top-width: 2.5px; border-top-style: solid; border-radius: 2px; }
+    .toggle.documented .swatch { border-color: var(--documented); }
+    .toggle.authorized .swatch { border-color: var(--authorized); border-top-style: dashed; }
+    .toggle.inferred   .swatch { border-color: var(--inferred); border-top-style: dotted; }
+    .toggle.speculative .swatch { border-color: var(--speculative); border-top-style: dotted; }
+    .toggle.on { color: #fff; }
+    .toggle.documented.on { border-color: #2b5566; background: #0c1a20; }
+    .toggle.authorized.on { border-color: #5a4516; background: #1c1407; }
+    .toggle.inferred.on   { border-color: #4a3a66; background: #160e22; }
+    .toggle.speculative.on{ border-color: #33383f; background: #14161a; }
+    .btn { font-size: 12px; color: #aeb4bc; background: #0e1014; border: 1px solid var(--line); border-radius: 6px; padding: 5px 11px; cursor: pointer; }
+    .btn:hover { background: #14171c; color: #fff; }
+
+    /* far view: headline + nut graf lead the story */
+    .editorial { padding: 14px 22px 13px; border-bottom: 1px solid var(--line); background: #0a0c0f; }
+    .editorial h1 { font-size: 19px; font-weight: 700; color: #fff; letter-spacing: -0.015em; line-height: 1.25; margin-bottom: 5px; }
+    .editorial .dek { font-size: 13px; color: #9aa0a8; line-height: 1.55; max-width: 920px; }
+    .editorial .dek b { color: #c4cad2; font-weight: 600; }
+
+    .stage { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
+    .react-flow { background:
+        radial-gradient(1100px 560px at 32% 8%, #14171d 0%, rgba(20,23,29,0) 62%),
+        linear-gradient(#0a0c0f, #060708); }
+    .react-flow__handle { opacity: 0; pointer-events: none; min-width: 1px; min-height: 1px; }
+    .react-flow__attribution { display: none; }
+
+    .station { border: 1.5px solid #888; border-radius: 9px; background: #0e1116; padding: 9px 13px;
+      text-align: center; color: #eef1f5; font-size: 13.5px; font-weight: 600; line-height: 1.25; cursor: pointer;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.4); transition: box-shadow .15s, background .15s; position: relative; }
+    .station::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 9px 0 0 9px; background: var(--accent); }
+    .station:hover { background: #141821; box-shadow: 0 0 0 1px var(--accent); }
+    .station.primary { font-size: 14.5px; font-weight: 700; padding: 11px 15px; }
+    .station.sel { box-shadow: 0 0 0 2px #fff; }
+    .station .st-type { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #707983; font-weight: 700; margin-top: 3px; }
+    .station .authchip { display:inline-block; font-size: 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--authorized); margin-top: 4px; }
+    /* lane headers: structural, not subliminal */
+    .lane-head { font-size: 12.5px; font-weight: 700; letter-spacing: 0.04em; color: #828c97; white-space: nowrap; pointer-events: none; text-align: center; }
+    .lane-head .num { display:inline-block; width:17px; height:17px; line-height:16px; border-radius:50%; border:1px solid #2c333c; color:#6b7480; font-size:10px; margin-right:6px; text-align:center; }
+
+    /* near view: bottom drawer */
+    .drawer { background: var(--panel); border-top: 1px solid var(--line); height: 226px; transition: height .2s ease; display: flex; flex-direction: column; min-height: 0; }
+    .drawer.collapsed { height: 44px; }
+    .drawer-bar { display: flex; align-items: center; gap: 12px; padding: 0 22px; height: 44px; flex-shrink: 0; cursor: pointer; }
+    .drawer-bar .grip { width: 34px; height: 4px; border-radius: 3px; background: #2a2f37; }
+    .drawer-bar .title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em; color: #7a828c; font-weight: 700; }
+    .drawer-bar .count { font-size: 12px; color: #5b626b; font-variant-numeric: tabular-nums; }
+    .drawer-bar .chev { margin-left: auto; color: #5b626b; font-size: 13px; }
+    .drawer-body { display: flex; gap: 26px; padding: 4px 22px 20px; overflow: auto; flex: 1; min-height: 0; }
+    .drawer.collapsed .drawer-body { display: none; }
+    .col h4 { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: #555b63; margin-bottom: 9px; }
+    .col-shows { flex: 0 0 330px; }
+    .col-fields { flex: 0 0 250px; }
+    .col-sel { flex: 1; min-width: 0; border-left: 1px solid var(--line); padding-left: 24px; }
+    .shows-text { font-size: 12.5px; color: #b6bcc4; line-height: 1.6; margin-bottom: 11px; }
+    .legend-line { font-size: 11px; color: #707983; line-height: 1.7; }
+    .ln { display: inline-block; width: 20px; height: 0; vertical-align: middle; margin-right: 4px; }
+    .ln.doc { border-top: 2.5px solid var(--documented); }
+    .ln.auth { border-top: 2.5px dashed var(--authorized); }
+    .ln.inf { border-top: 2.5px dotted var(--inferred); }
+    .idx-item { display: flex; align-items: center; gap: 8px; padding: 5px 8px; margin: 2px 0; border-radius: 6px; font-size: 12.5px; color: #aab0b8; cursor: pointer; }
+    .idx-item:hover { background: #15181d; color: #e6eaef; }
+    .idx-item.on { background: #14171c; color: #fff; }
+    .idx-item .chip { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+    .idx-group { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: #4b535c; margin: 9px 0 3px; }
+    .idx-off { font-size: 12px; color: #5b626b; padding: 3px 8px; }
+
+    .sel-placeholder { color: #b6bcc4; font-size: 12.5px; line-height: 1.6; }
+    .sel-placeholder b { color: #d6dae0; }
+    .badge { display: inline-block; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 9px; border-radius: 4px; margin-bottom: 9px; }
+    .badge.documented { background: #08222e; color: var(--documented); }
+    .badge.authorized { background: #241902; color: var(--authorized); }
+    .badge.inferred   { background: #1a1030; color: var(--inferred); }
+    .badge.speculative{ background: #15171b; color: #8b929b; }
+    .sel h2 { font-size: 15.5px; color: #fff; margin-bottom: 5px; font-weight: 600; }
+    .sel h2 .verb { color: #5b626b; font-weight: 400; }
+    .sel .plain { font-size: 12.5px; color: #c4cad2; line-height: 1.55; margin-bottom: 5px; }
+    .sel .why { font-size: 12px; color: #8b929b; line-height: 1.55; margin-bottom: 11px; }
+    .sel .why b { color: #aab0b8; font-weight: 600; }
+    .sel-grid { display: flex; gap: 22px; align-items: flex-start; }
+    .sel-meta { flex: 0 0 290px; }
+    .sel-receipts { flex: 1; min-width: 0; }
+    .field { margin-bottom: 10px; }
+    .field .k { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.09em; color: #5b626b; margin-bottom: 4px; }
+    .field .v { font-size: 12.5px; color: #d2d7dd; line-height: 1.5; }
+    .authby { display:inline-block; font-size: 11px; color: var(--authorized); background: #1c1407; border:1px solid #5a4516; border-radius: 5px; padding: 3px 8px; }
+    .contest { border-left: 2px solid var(--authorized); padding-left: 10px; }
+    .contest strong { color: #c6ccd4; font-weight: 600; }
+    .receipt-row { display: flex; gap: 11px; overflow-x: auto; padding-bottom: 6px; }
+    .receipt { flex: 0 0 285px; background: #0c0e12; border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+    .receipt .kind { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--authorized); margin-bottom: 6px; }
+    .receipt .basis { font-size: 11.5px; color: #aeb4bc; line-height: 1.55; margin-bottom: 8px; }
+    .receipt a { font-size: 11px; color: var(--documented); word-break: break-all; text-decoration: none; }
+    .receipt a:hover { text-decoration: underline; }
+    .receipt .ret { font-size: 10.5px; color: #5b626b; margin-top: 4px; }
+    .boot { display: grid; place-items: center; height: 100%; color: #6b7280; font-size: 13px; text-align: center; }
+    .boot a { color: var(--documented); }
+    @media (max-width: 1000px) { .col-fields { display: none; } }
+    @media (max-width: 760px) { .col-shows { flex-basis: 220px; } .sel-grid { flex-direction: column; } .sel-meta { flex: none; } }
+  </style>
+</head>
+<body>
+  <div id="root"><div class="boot">Loading composition story…</div></div>
+
+  <script type="module">
+  import React, { useState, useMemo, useEffect } from 'https://esm.sh/react@18.3.1';
+  import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client';
+  import htm from 'https://esm.sh/htm@3.1.1';
+  import { ReactFlow, Background, Controls, Handle, Position, MarkerType,
+           ReactFlowProvider, useReactFlow, useNodesInitialized } from 'https://esm.sh/@xyflow/react@12.3.5?deps=react@18.3.1,react-dom@18.3.1';
+  import ELK from 'https://esm.sh/elkjs@0.9.3/lib/elk.bundled.js';
+  const html = htm.bind(React.createElement);
+
+  const NODE = {
+    portal:            { c:'#4fc3f7', label:'Portal',            what:'A public website where people hand over information.', why:'The front door — what is typed here begins every downstream join.' },
+    form:              { c:'#7aa2ff', label:'Form',              what:'An official collection form (with an OMB control number).', why:'Defines exactly which categories of data are gathered.' },
+    instrument:        { c:'#f5a623', label:'Legal authority',   what:'A law, statute, or executive order.', why:'It permits collection and sharing — but permission is not proof a flow happens.' },
+    field_class:       { c:'#5bbf6a', label:'Record field',      what:'A category of data collected — not a real value.', why:'These are join keys (SSNs, identities) that let separate records be linked.' },
+    system_of_record:  { c:'#ef5350', label:'System of record',  what:'A government database of record.', why:'Where intake lands and is retained; sharing and matching happen from here.' },
+    agency:            { c:'#c6ccd4', label:'Agency',            what:'A government body.', why:'Agencies send and receive data across boundaries the public cannot see.' },
+    operator:          { c:'#c08bff', label:'Operator',          what:'A private contractor running part of the surface.', why:'Custody passes through vendors — e.g. identity proofing.' },
+    decision_surface:  { c:'#fbc02d', label:'Decision',          what:'A decision made using the data.', why:'Eligibility, compliance, enforcement — where the composed record acts on you.' },
+    external_consumer: { c:'#5fd0bf', label:'External consumer', what:'A non-federal recipient (state, insurer, broker).', why:'Where claim discipline is hardest. Empty here by design.' },
+  };
+  const CLAIM = { documented:'#4fc3f7', authorized:'#f5a623', inferred:'#c08bff', speculative:'#5a6068' };
+  const CLAIM_HELP = {
+    documented: 'A public record says this flow actually exists.',
+    authorized: 'A law permits this; there is no public evidence it actually happens.',
+    inferred:   'Composition makes this derivable — not disclosed, not authorized as such.',
+    speculative:'Plausible under incentive analysis only.',
+  };
+  const EDGE_VERB = { collects:'collects', feeds:'sends intake into', operates:'runs', shares_with:'discloses records to',
+    matches_against:'cross-matches records with', consumed_by:'is used to drive', authorizes:'permits', enables_inference:'composes into' };
+  // reader-facing layer controls (internal claim class in parens stays in the drawer)
+  const LAYERS = [
+    { claim:'documented',  label:'Documented path' },
+    { claim:'authorized',  label:'Legal authority' },
+    { claim:'inferred',    label:'Possible inferences' },
+    { claim:'speculative', label:'External power' },
+  ];
+  // editorial lane names — the map regions, in plain language
+  const LANE_LABELS = { authority:'Legal authority', intake:'Where people enter', collection:'What the form asks',
+    data:'Record fields created', custody:'Where the record goes', inference:'Possible composition',
+    decision:'Decisions it supports', external:'External power' };
+  const clamp = (lo,v,hi) => Math.max(lo, Math.min(v, hi));
+  const LANE_W = 250;
+
+  async function elkLayout(graph) {
+    const elk = new ELK();
+    const rankById = {};
+    graph.nodes.forEach(n => { rankById[n.data.id] = n.data.rank ?? 0; });
+    const children = graph.nodes.map(n => ({
+      id: n.data.id,
+      width: clamp(104, 26 + (n.data.short_label||n.data.id).length * 8.4, 198),
+      height: 50,
+      layoutOptions: { 'elk.partitioning.partition': String(n.data.rank ?? 0) },
+    }));
+    const edges = graph.edges.map(e => ({ id: e.data.id, sources: [e.data.source], targets: [e.data.target] }));
+    const res = await elk.layout({
+      id: 'root',
+      layoutOptions: { 'elk.algorithm':'layered', 'elk.direction':'RIGHT', 'elk.partitioning.activate':'true',
+        'elk.layered.spacing.nodeNodeBetweenLayers':'120', 'elk.spacing.nodeNode':'34',
+        'elk.layered.nodePlacement.strategy':'NETWORK_SIMPLEX' },
+      children, edges,
+    });
+    const pos = {};
+    res.children.forEach(c => { pos[c.id] = { x: rankById[c.id] * LANE_W, y: c.y, w: c.width, h: c.height }; });
+    return pos;
+  }
+
+  function StationNode({ data }) {
+    const meta = NODE[data.type] || { c:'#888', label:data.type };
+    const primary = ['portal','system_of_record','decision_surface'].includes(data.type);
+    const cls = `station${primary?' primary':''}${data.sel?' sel':''}`;
+    return html`<div class=${cls} style=${{ '--accent': meta.c, borderColor: meta.c, width: (data.w||120)+'px' }}>
+      <${Handle} type="target" position=${Position.Left} isConnectable=${false} />
+      <div>${data.short_label}</div>
+      <div class="st-type">${meta.label}</div>
+      ${data.authBadge ? html`<div class="authchip">⚖ ${data.authBadge}</div>` : null}
+      <${Handle} type="source" position=${Position.Right} isConnectable=${false} />
+    </div>`;
+  }
+  function LaneNode({ data }) {
+    return html`<div class="lane-head">${data.label}</div>`;
+  }
+  const nodeTypes = { station: StationNode, lane: LaneNode };
+
+  function Fitter({ activeKey }) {
+    const inited = useNodesInitialized();
+    const rf = useReactFlow();
+    useEffect(() => {
+      if (!inited) return;
+      const id = requestAnimationFrame(() =>
+        rf.fitView({ padding: 0.22, includeHiddenNodes: false, minZoom: 0.5, maxZoom: 1.12, duration: 250 }));
+      return () => cancelAnimationFrame(id);
+    }, [inited, activeKey]);
+    return null;
+  }
+
+  function Toolbar({ active, setActive }) {
+    const rf = useReactFlow();
+    return html`<header>
+      <a class="back" href="../">← Atlas</a>
+      <span class="brand">Intake Composition Atlas</span>
+      <span class="spacer"></span>
+      <span class="lbl">Show</span>
+      ${LAYERS.map(L => html`<label key=${L.claim} class=${`toggle ${L.claim}${active.has(L.claim)?' on':''}`}
+          onClick=${() => { const n=new Set(active); n.has(L.claim)?n.delete(L.claim):n.add(L.claim); setActive(n); }}>
+        <span class="swatch"></span>${L.label}</label>`)}
+      <button class="btn" onClick=${() => rf.fitView({ padding: 0.22, includeHiddenNodes: false, minZoom: 0.5, maxZoom: 1.12, duration: 300 })}>Fit</button>
+    </header>`;
+  }
+
+  function Receipt({ r }) {
+    return html`<div class="receipt">
+      <div class="kind">${r.kind||'receipt'}</div>
+      <div class="basis">${r.basis||''}</div>
+      ${r.url ? html`<a href=${r.url} target="_blank" rel="noopener">${r.url}</a>` : null}
+      <div class="ret">retrieved ${r.retrieved||'—'}${r.archived ? html` · <a href=${r.archived} target="_blank" rel="noopener">archived</a>` : null}</div>
+    </div>`;
+  }
+
+  function SelectionDetail({ sel, graph, why }) {
+    if (!sel) return html`<div class="sel-placeholder"><b>Why it matters.</b> ${why||
+      'These fields are not just values — they are join keys (SSNs, identities) that make separate records composable.'}
+      <br/><br/>Click any box or line to see what it is and the public records behind it.</div>`;
+    if (sel.kind === 'node') {
+      const d = sel.data, t = NODE[d.type] || { label:d.type, c:'#888', what:'', why:'' };
+      return html`<div class="sel">
+        <span class="badge" style=${{ background:'#14171c', color:t.c }}>${t.label}</span>
+        <h2>${d.label}</h2>
+        <div class="plain">${t.what}</div>
+        <div class="why"><b>Why it matters:</b> ${t.why}</div>
+        <div class="field"><div class="k">Stage</div><div class="v">${LANE_LABELS[d.lane]||d.lane}</div></div>
+      </div>`;
+    }
+    const d = sel.data;
+    const short = id => (graph.nodes.find(n => n.data.id === id)?.data.short_label) || id;
+    const verb = EDGE_VERB[d.type] || (d.type||'').replace(/_/g,' ');
+    return html`<div class="sel">
+      <span class=${`badge ${d.claim}`}>${d.claim}</span>
+      <h2>${short(d.source)} <span class="verb">${verb}</span> ${short(d.target)}</h2>
+      <div class="plain">${CLAIM_HELP[d.claim]||''}</div>
+      <div class="sel-grid">
+        <div class="sel-meta">
+          ${d.authorized_by_label ? html`<div class="field"><div class="k">Authorized by</div><div class="v"><span class="authby">⚖ ${d.authorized_by_label}</span></div></div>` : null}
+          ${(d.derivation&&d.derivation.length) ? html`<div class="field"><div class="k">Derivation (parent edges)</div><div class="v">${d.derivation.join(', ')}</div></div>` : null}
+          ${d.contestation ? html`<div class="field"><div class="k">Contestation</div><div class="v contest"><strong>Notice:</strong> ${d.contestation.notice}<br/><strong>Appeal:</strong> ${d.contestation.appeal}</div></div>` : null}
+        </div>
+        <div class="sel-receipts">
+          <div class="field"><div class="k">Sources / receipts (${(d.receipts||[]).length})</div></div>
+          <div class="receipt-row">${(d.receipts||[]).map((r,i) => html`<${Receipt} key=${i} r=${r} />`)}</div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function Drawer({ graph, meta, sel, setSel, vCounts, collapsed, setCollapsed }) {
+    const collected = graph.nodes.filter(n => n.data.type === 'field_class' && n.data.lane === 'data');
+    const inferredFields = graph.nodes.filter(n => n.data.type === 'field_class' && n.data.lane === 'inference');
+    return html`<div class=${`drawer${collapsed?' collapsed':''}`}>
+      <div class="drawer-bar" onClick=${() => setCollapsed(!collapsed)}>
+        <span class="grip"></span><span class="title">${sel ? 'Selection' : 'What this map shows'}</span>
+        <span class="count">${vCounts.nodes} nodes · ${vCounts.edges} edges shown</span>
+        <span class="chev">${collapsed?'▴':'▾'}</span>
+      </div>
+      <div class="drawer-body">
+        <div class="col col-shows">
+          <h4>What this map shows</h4>
+          <div class="shows-text">${meta.summary || meta.dek || ''}</div>
+          <div class="legend-line">
+            <span class="ln doc"></span> documented &nbsp; <span class="ln auth"></span> authorized &nbsp; <span class="ln inf"></span> inferred<br/>
+            Read left → right. Click any box or line for its receipts.
+          </div>
+        </div>
+        <div class="col col-fields">
+          <h4>Fields this case documents</h4>
+          ${collected.map(n => html`<div key=${n.data.id}
+              class=${`idx-item${sel&&sel.kind==='node'&&sel.data.id===n.data.id?' on':''}`}
+              onClick=${() => setSel({ kind:'node', data:n.data })}>
+            <span class="chip" style=${{ background: NODE.field_class.c }}></span>${n.data.short_label}</div>`)}
+          ${inferredFields.length ? html`<div class="idx-group">Inferred composition (off by default)</div>
+            ${inferredFields.map(n => html`<div key=${n.data.id}
+              class=${`idx-item${sel&&sel.kind==='node'&&sel.data.id===n.data.id?' on':''}`}
+              onClick=${() => setSel({ kind:'node', data:n.data })}>
+              <span class="chip" style=${{ background: NODE.inferred ? '#c08bff' : '#888' }}></span>${n.data.short_label}</div>`)}` : null}
+          <div class="idx-group">External consumers</div>
+          <div class="idx-off">none in v1 — by design</div>
+        </div>
+        <div class="col col-sel">
+          <h4>${sel ? 'Selection' : 'Why it matters'}</h4>
+          <${SelectionDetail} sel=${sel} graph=${graph} why=${meta.why} />
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function App({ graph, pos }) {
+    const meta = (graph.cases && graph.cases[0]) || {};
+    const [active, setActive] = useState(new Set(['documented']));
+    const [sel, setSel] = useState(null);
+    const [collapsed, setCollapsed] = useState(false);
+
+    // which instrument authorizes each node (for the ⚖ badge instead of a spine node)
+    const authByNode = useMemo(() => {
+      const m = {};
+      graph.edges.forEach(e => { if (e.data.type === 'authorizes') {
+        const tgt = e.data.target; const src = graph.nodes.find(n => n.data.id === e.data.source);
+        if (src) m[tgt] = src.data.short_label;
+      }});
+      return m;
+    }, [graph]);
+
+    const laneHeaders = useMemo(() => {
+      const byRank = {};
+      graph.nodes.forEach(n => { const p = pos[n.data.id]; if (!p) return;
+        (byRank[n.data.rank] ||= { lane:n.data.lane, xs:[], minY:Infinity });
+        byRank[n.data.rank].xs.push(p.x); byRank[n.data.rank].minY = Math.min(byRank[n.data.rank].minY, p.y); });
+      const ranks = Object.keys(byRank).map(Number).sort((a,b)=>a-b);
+      return ranks.map((rank, i) => ({
+        id: '__lane_'+rank, type:'lane', selectable:false, draggable:false, focusable:false,
+        position: { x: byRank[rank].xs[0], y: byRank[rank].minY - 64 },
+        data: { label: (LANE_LABELS[byRank[rank].lane]||byRank[rank].lane), num: i+1, lane: byRank[rank].lane },
+      }));
+    }, [graph, pos]);
+
+    const visibleEdges = useMemo(() => graph.edges.filter(e => active.has(e.data.claim)), [graph, active]);
+    const visibleNodeIds = useMemo(() => {
+      const s = new Set();
+      visibleEdges.forEach(e => { s.add(e.data.source); s.add(e.data.target); });
+      return s;
+    }, [visibleEdges]);
+
+    const rfNodes = useMemo(() => {
+      const stations = graph.nodes.map(n => {
+        const p = pos[n.data.id] || { x:0, y:0, w:120 };
+        return { id:n.data.id, type:'station', position:{ x:p.x, y:p.y }, draggable:false, selectable:true,
+          hidden: !visibleNodeIds.has(n.data.id),
+          data: { ...n.data, w:p.w, authBadge: authByNode[n.data.id], sel: sel&&sel.kind==='node'&&sel.data.id===n.data.id } };
+      });
+      const lanes = laneHeaders.map(h => ({ ...h,
+        hidden: !graph.nodes.some(n => n.data.lane === h.data.lane && visibleNodeIds.has(n.data.id)) }));
+      return stations.concat(lanes);
+    }, [graph, pos, visibleNodeIds, sel, laneHeaders, authByNode]);
+
+    const rfEdges = useMemo(() => visibleEdges.map(e => {
+      const d = e.data, color = CLAIM[d.claim] || '#888', ann = d.role === 'authorization';
+      return {
+        id: d.id, source: d.source, target: d.target, type: 'smoothstep',
+        markerEnd: ann ? undefined : { type: MarkerType.ArrowClosed, color, width: 15, height: 15 },
+        label: ann ? 'authorizes' : undefined,
+        labelStyle: ann ? { fill:'#8a6f28', fontSize:9, textTransform:'uppercase', letterSpacing:'0.06em' } : undefined,
+        labelBgStyle: ann ? { fill:'#0d0f13' } : undefined,
+        selected: sel && sel.kind==='edge' && sel.data.id===d.id,
+        style: { stroke: color, strokeWidth: d.claim==='documented' ? 2 : 1.6, opacity: ann ? 0.4 : 0.94,
+          strokeDasharray: d.claim==='documented' ? undefined : (d.claim==='inferred' ? '2 4' : (ann ? '1 4' : '6 5')) },
+        data: d,
+      };
+    }), [visibleEdges, sel]);
+
+    const vCounts = { nodes: visibleNodeIds.size, edges: visibleEdges.length };
+    const activeKey = [...active].sort().join(',');
+
+    return html`<div class="page">
+      <${Toolbar} active=${active} setActive=${setActive} />
+      <div class="editorial">
+        <h1>${meta.headline || 'Composition Graph'}</h1>
+        <div class="dek">${meta.dek || 'Position is the stage in the machine; line style is how strong the claim is. Default view shows the documented path only.'}</div>
+      </div>
+      <div class="stage">
+        <${ReactFlow}
+          nodes=${rfNodes} edges=${rfEdges} nodeTypes=${nodeTypes}
+          minZoom=${0.35} maxZoom=${1.8}
+          nodesDraggable=${false} nodesConnectable=${false} elementsSelectable=${true}
+          proOptions=${{ hideAttribution: true }}
+          onNodeClick=${(_, node) => { if (node.type === 'station') setSel({ kind:'node', data: graph.nodes.find(n=>n.data.id===node.id).data }); }}
+          onEdgeClick=${(_, edge) => setSel({ kind:'edge', data: edge.data })}
+          onPaneClick=${() => setSel(null)}>
+          <${Background} color="#181b21" gap=${28} size=${1} />
+          <${Controls} showInteractive=${false} />
+          <${Fitter} activeKey=${activeKey} />
+        </${ReactFlow}>
+      </div>
+      <${Drawer} graph=${graph} meta=${meta} sel=${sel} setSel=${setSel} vCounts=${vCounts}
+                 collapsed=${collapsed} setCollapsed=${setCollapsed} />
+    </div>`;
+  }
+
+  (async function boot() {
+    try {
+      const graph = await fetch('../data/graph.json').then(r => r.json());
+      const pos = await elkLayout(graph);
+      createRoot(document.getElementById('root')).render(
+        html`<${ReactFlowProvider}><${App} graph=${graph} pos=${pos} /></${ReactFlowProvider}>`
+      );
+    } catch (err) {
+      document.getElementById('root').innerHTML =
+        '<div class="boot">Renderer failed to load: ' + (err && err.message ? err.message : err) +
+        '.<br><br>Fallback: <a href="../graph-cyto/">open the Cytoscape renderer →</a></div>';
+      console.error(err);
+    }
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+# Synthetic fixture — NOT a real case. Exercises all four claim types and every
+# linter rule's happy path. Receipts are inline (fixtures self-contain so the
+# linter can run on a single file). Real cases file receipts under receipts/.
+case_id: synthetic-all-claims
+title: "Synthetic fixture exercising all four claim types"
+status: emerging
+date_surfaced: 2026-06-12
+
+receipts_inline:
+  - id: r-syn-pia
+    kind: pia
+    url: https://example.gov/pia/synthetic
+    archived: https://web.archive.org/web/2026/https://example.gov/pia/synthetic
+    retrieved: 2026-06-01
+    basis: "PIA §3 lists child SSN among collected elements for the synthetic portal"
+  - id: r-syn-cma
+    kind: cma
+    url: https://example.gov/cma/synthetic
+    retrieved: 2026-06-01
+    basis: "Matching agreement art. II: portal system discloses to receiving agency for verification"
+  - id: r-syn-eo
+    kind: eo
+    url: https://example.gov/eo/synthetic
+    retrieved: 2026-06-01
+    basis: "EO §2 directs agencies to share intake data government-wide (authorization only)"
+  - id: r-syn-obs
+    kind: observed_artifact
+    url: https://synthetic.example.gov/
+    retrieved: 2026-06-10
+    basis: "Live page loads identity-proofing vendor JS from idproof.example.com"
+
+nodes:
+  - { id: portal-syn, type: portal, label: "Synthetic Portal" }
+  - { id: form-syn, type: form, label: "Form SYN-1" }
+  - { id: fc-child-ssn, type: field_class, label: "Child SSN" }
+  - { id: fc-sponsor-id, type: field_class, label: "Sponsor identity" }
+  - { id: sor-syn, type: system_of_record, label: "Synthetic SOR" }
+  - { id: agency-recv, type: agency, label: "Receiving Agency" }
+  - { id: op-idproof, type: operator, label: "IDProof Inc." }
+  - { id: ds-eligibility, type: decision_surface, label: "Benefits eligibility" }
+  - { id: attr-household, type: field_class, label: "Derived household structure" }
+
+edges:
+  # documented: a PIA witnesses the collection
+  - id: e-syn-1
+    type: collects
+    from: form-syn
+    to: fc-child-ssn
+    claim: documented
+    receipts: [r-syn-pia]
+  # documented: observed vendor JS
+  - id: e-syn-2
+    type: operates
+    from: op-idproof
+    to: portal-syn
+    claim: documented
+    receipts: [r-syn-obs]
+  # documented: CMA witnesses the sharing flow (contestation block required)
+  - id: e-syn-3
+    type: shares_with
+    from: sor-syn
+    to: agency-recv
+    claim: documented
+    receipts: [r-syn-cma]
+    contestation:
+      notice: "Privacy Act SORN routine use; CMA published in Federal Register"
+      appeal: "appeals target the official eligibility record, not the matched output"
+  # authorized: an EO permits a broader flow that is not witnessed
+  - id: e-syn-4
+    type: shares_with
+    from: sor-syn
+    to: agency-recv
+    claim: authorized
+    receipts: [r-syn-eo]
+    contestation:
+      notice: none_identified
+      appeal: none_identified
+  # feeds, documented, supports the inference below
+  - id: e-syn-5
+    type: feeds
+    from: form-syn
+    to: sor-syn
+    claim: documented
+    receipts: [r-syn-pia]
+  - id: e-syn-6
+    type: collects
+    from: form-syn
+    to: fc-sponsor-id
+    claim: documented
+    receipts: [r-syn-pia]
+  # speculative (within the cap of 2)
+  - id: e-syn-7
+    type: consumed_by
+    from: sor-syn
+    to: ds-eligibility
+    claim: speculative
+    receipts: [r-syn-eo]
+    contestation:
+      notice: none_identified
+      appeal: none_identified
+
+inference_layer:
+  # inferred: composition of documented collects/feeds edges yields a derived attribute.
+  # parents are documented (depth-1 cap satisfied).
+  - id: e-syn-inf-1
+    type: enables_inference
+    from: fc-child-ssn
+    to: attr-household
+    claim: inferred
+    receipts: [r-syn-pia]
+    derivation: [e-syn-1, e-syn-6, e-syn-5]

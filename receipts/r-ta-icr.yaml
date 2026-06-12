@@ -1,0 +1,10 @@
+id: r-ta-icr
+kind: omb_icr
+url: https://www.federalregister.gov/documents/2026/04/28/2026-08228/agency-information-collection-activities-comment-request-on-ira-and-trump-account-contribution
+archived: ""   # TODO(snapshot.py, Phase 5)
+retrieved: 2026-06-12
+basis: >
+  IRS Paperwork Reduction Act notice, "Agency Information Collection Activities; Comment
+  Request on IRA and Trump Account Contribution Information" (FR 2026-08228, Apr 28 2026).
+  Covers the information collection for Trump Account contribution information under OMB
+  control number 1545-2336.

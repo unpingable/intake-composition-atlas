@@ -1,0 +1,11 @@
+id: r-ta-form
+kind: omb_icr
+url: https://www.irs.gov/instructions/i4547
+archived: ""   # TODO(snapshot.py, Phase 5): archive.org snapshot not yet captured
+retrieved: 2026-06-12
+basis: >
+  Instructions for Form 4547 (Rev. Dec 2025), "Trump Account Election(s)", OMB control
+  number 1545-2336. Collects: parent/legal-guardian name, address, and SSN/ITIN (Part I);
+  eligible child's name, relationship, address, and SSN (Part II); and elections to open
+  the account and request the $1,000 pilot contribution (Parts III–IV). Authority: "Sections
+  530A and 6109 and their regulations require you to provide this information."

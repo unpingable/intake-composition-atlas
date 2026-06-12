@@ -1,0 +1,12 @@
+id: r-ta-prop-reg
+kind: press_or_agency_statement
+url: https://www.irs.gov/newsroom/treasury-irs-issue-proposed-regulations-for-trump-accounts-contribution-pilot-program-treasury-department-to-deposit-1000-into-the-account-of-each-eligible-child
+archived: ""   # TODO(snapshot.py, Phase 5)
+retrieved: 2026-06-12
+basis: >
+  IRS newsroom statement on the proposed pilot-program regulations: "Treasury will make
+  one-time $1,000 pilot program contributions to the Trump Accounts of eligible children for
+  whom elections have been made." Eligibility: child "must be born in calendar year 2025,
+  2026, 2027, or 2028, be a United States citizen, [and] have been issued a Social Security
+  Number." The statement does NOT describe how eligibility is verified or whether records are
+  shared/matched between IRS, Treasury, and SSA — recorded here as absence, not concealment.

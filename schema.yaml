@@ -1,0 +1,121 @@
+# Intake Composition Atlas — Graph Schema
+#
+# Thesis: populations exposed to inferences and decisions composed outside their
+#         effective contestation surface.
+#
+# This is not prose. It is a typed, receipt-backed graph. Every edge carries
+# exactly one claim type and at least one receipt. The linter (tools/lint.py)
+# enforces every rule stated here. If a rule is not machine-checkable yet, it is
+# marked DOCTRINE and lives in METHODOLOGY.md as a reviewer obligation.
+
+# ---------------------------------------------------------------------------
+# Claim types — the spine of the project. Each edge is exactly one.
+# ---------------------------------------------------------------------------
+claim_types:
+  documented:   # a public record states this flow/collection exists
+    eligible_receipt_kinds:
+      - cma
+      - sorn
+      - pia
+      - omb_icr
+      - contract_award
+      - fedramp
+      - observed_artifact
+      - press_or_agency_statement
+      - statute   # ONLY as to the statute's own text, never as basis for a flow
+  authorized:   # a legal instrument permits this flow; no evidence it occurs
+    eligible_receipt_kinds: [eo, statute, sorn]   # routine-use clause, EO, enabling statute
+  inferred:     # composition makes this derivable; not authorized as such, not observed
+    requires: derivation   # non-empty; parents must exist; no inferred parent (depth-1 cap)
+  speculative:  # plausible under incentive analysis only
+    excluded_from_default_view: true
+    max_per_case: 2
+
+# ---------------------------------------------------------------------------
+# Node types — institutions, systems, document classes, field *types*.
+# NEVER individuals, NEVER example records, NEVER PII.
+# ---------------------------------------------------------------------------
+node_types:
+  portal:            # public-facing intake surface (TrumpAccounts.gov, ...)
+  instrument:        # legal basis (EO, statute, reg, OMB memo)
+  form:              # collection instrument; cite OMB control number where applicable
+  field_class:       # COARSE category of data collected (child SSN, medication+ZIP,
+                     #   sponsor identity, behavioral telemetry). Field *classes*, not fields.
+  system_of_record:  # Privacy Act SORN-backed system; cite SORN number
+  agency:            # IRS, Treasury, DHS, USCIS, HHS, SSA, ...
+  operator:          # private contractor/vendor (identity proofing, cloud, analytics, payments)
+  decision_surface:  # downstream use (benefits eligibility, fraud scoring, enforcement
+                     #   prioritization, adjudication, pricing, targeting)
+  external_consumer: # non-federal parties (states, law enforcement, insurers, brokers).
+                     #   v1 ships this node type with zero/near-zero edges by design — the
+                     #   empty region of the graph is itself a finding. Claim discipline is
+                     #   hardest here; do not populate it on suspicion.
+
+# Node record shape:
+#   id: portal-trump-accounts        # slug, unique across the whole graph
+#   type: portal                     # one of node_types
+#   label: "TrumpAccounts.gov"       # display name
+#   agency: agency-irs               # optional pointer(s); institutions only
+#   notes: ""
+
+# ---------------------------------------------------------------------------
+# Edge types — the composition operations.
+# ---------------------------------------------------------------------------
+edge_types:
+  collects:          # portal/form  -> field_class
+  authorizes:        # instrument   -> portal | edge   (the instrument permits a thing)
+  feeds:             # portal/form  -> system_of_record
+  operates:          # operator     -> portal | system_of_record
+  shares_with:       # system/agency-> agency | external_consumer   (CMA gold lives here)
+  matches_against:   # system       <-> system          (Computer Matching Agreements)
+  enables_inference: # field_class set -> derived attribute (ALWAYS claim: inferred)
+  consumed_by:       # system/graph -> decision_surface
+
+# Edges requiring a contestation block (the standing question, per edge):
+contestation_required_on: [shares_with, matches_against, consumed_by]
+
+# ---------------------------------------------------------------------------
+# Edge record shape
+# ---------------------------------------------------------------------------
+# id: e-0042
+# type: shares_with                  # one of edge_types
+# from: sor-irs-trump-accounts       # must resolve to a node id
+# to: agency-treasury-bfs            # must resolve to a node id (or edge id for `authorizes`)
+# claim: documented                  # one of claim_types
+# receipts: [r-0017, r-0018]         # REQUIRED; >=1; each must resolve to a receipt id
+# derivation: []                     # REQUIRED non-empty iff claim == inferred; parent edge ids
+# contestation:                      # REQUIRED on contestation_required_on edge types
+#   notice: "Privacy Act SORN routine use (k)(3)"   # how would a subject learn of this?
+#   appeal: none_identified          # what process targets the composed result?
+# effective: { from: 2025-07, observed: 2026-05-12 }   # optional
+# notes: ""
+
+# ---------------------------------------------------------------------------
+# Receipt record shape (receipts/<id>.yaml — one file per receipt, shared across edges)
+# ---------------------------------------------------------------------------
+# id: r-0017
+# kind: sorn                         # one of claim_types.*.eligible_receipt_kinds (union)
+# url: https://...
+# archived: https://web.archive.org/...   # archive.org snapshot; recommended
+# retrieved: 2026-06-12              # REQUIRED; YYYY-MM-DD
+# basis: "Routine use (k)(3) permits disclosure to Treasury BFS for payment processing"
+#                                    # paraphrase + pinpoint cite (section/page). Do NOT copy long text.
+
+# ---------------------------------------------------------------------------
+# Case file shape (cases/<slug>.yaml)
+# ---------------------------------------------------------------------------
+# case_id: trump-accounts
+# title: "..."
+# status: active | emerging | resolved | recurring | historical
+# date_surfaced: 2026-06-12
+# nodes: [ {node records...} ]
+# edges: [ {edge records...} ]
+# inference_layer:                   # enables_inference edges; the disciplined version of
+#   - { ...edge with type: enables_inference, claim: inferred, derivation: [...] }
+
+# ---------------------------------------------------------------------------
+# Staleness windows (REFRESH.md) — linter warns, does not fail, when exceeded.
+# ---------------------------------------------------------------------------
+staleness_days:
+  observed_artifact: 90    # portal observables change fast
+  default: 365             # Federal Register / filings age slowly

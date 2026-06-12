@@ -1,0 +1,490 @@
+{
+  "nodes": [
+    {
+      "data": {
+        "id": "portal-trump-accounts",
+        "type": "portal",
+        "label": "TrumpAccounts.gov",
+        "short_label": "TrumpAccounts.gov",
+        "lane": "intake",
+        "rank": 1,
+        "case": "trump-accounts"
+      }
+    },
+    {
+      "data": {
+        "id": "form-4547",
+        "type": "form",
+        "label": "Form 4547 \u2014 Trump Account Election(s) (OMB 1545-2336)",
+        "short_label": "Form 4547",
+        "lane": "collection",
+        "rank": 2,
+        "case": "trump-accounts"
+      }
+    },
+    {
+      "data": {
+        "id": "instrument-6434",
+        "type": "instrument",
+        "label": "IRC \u00a7 6434 / \u00a7 530A (\u00a7 70204, P.L. 119-21)",
+        "short_label": "IRC \u00a7 6434 / \u00a7 530A",
+        "lane": "authority",
+        "rank": 0,
+        "case": "trump-accounts"
+      }
+    },
+    {
+      "data": {
+        "id": "agency-irs",
+        "type": "agency",
+        "label": "Internal Revenue Service",
+        "short_label": "IRS",
+        "lane": "custody",
+        "rank": 4,
+        "case": "trump-accounts"
+      }
+    },
+    {
+      "data": {
+        "id": "agency-treasury",
+        "type": "agency",
+        "label": "U.S. Department of the Treasury",
+        "short_label": "Treasury",
+        "lane": "custody",
+        "rank": 4,
+        "case": "trump-accounts"
+      }
+    },
+    {
+      "data": {
+        "id": "op-idme",
+        "type": "operator",
+        "label": "ID.me (identity proofing)",
+        "short_label": "ID.me",
+        "lane": "intake",
+        "rank": 1,
+        "case": "trump-accounts"
+      }
+    },
+    {
+      "data": {
+        "id": "sor-tap",
+        "type": "system_of_record",
+        "label": "Treasury .031 \u2014 Trump Accounts Program (TAP)",
+        "short_label": "Treasury TAP system",
+        "lane": "custody",
+        "rank": 4,
+        "case": "trump-accounts"
+      }
+    },
+    {
+      "data": {
+        "id": "fc-child-ssn",
+        "type": "field_class",
+        "label": "Child SSN",
+        "short_label": "Child SSN",
+        "lane": "data",
+        "rank": 3,
+        "case": "trump-accounts"
+      }
+    },
+    {
+      "data": {
+        "id": "fc-child-identity",
+        "type": "field_class",
+        "label": "Child identity (name, relationship, address)",
+        "short_label": "Child identity",
+        "lane": "data",
+        "rank": 3,
+        "case": "trump-accounts"
+      }
+    },
+    {
+      "data": {
+        "id": "fc-guardian-identity",
+        "type": "field_class",
+        "label": "Parent/guardian identity (name, SSN/ITIN, address)",
+        "short_label": "Parent/guardian",
+        "lane": "data",
+        "rank": 3,
+        "case": "trump-accounts"
+      }
+    },
+    {
+      "data": {
+        "id": "fc-citizenship",
+        "type": "field_class",
+        "label": "Child citizenship / eligibility attestation",
+        "short_label": "Citizenship",
+        "lane": "data",
+        "rank": 3,
+        "case": "trump-accounts"
+      }
+    },
+    {
+      "data": {
+        "id": "ds-eligibility",
+        "type": "decision_surface",
+        "label": "Pilot-program eligibility determination",
+        "short_label": "Pilot eligibility",
+        "lane": "decision",
+        "rank": 6,
+        "case": "trump-accounts"
+      }
+    },
+    {
+      "data": {
+        "id": "ds-compliance",
+        "type": "decision_surface",
+        "label": "Program oversight / compliance / integrity",
+        "short_label": "Oversight / compliance",
+        "lane": "decision",
+        "rank": 6,
+        "case": "trump-accounts"
+      }
+    },
+    {
+      "data": {
+        "id": "attr-household",
+        "type": "field_class",
+        "label": "Derived household / parent-child linkage",
+        "short_label": "Household linkage",
+        "lane": "inference",
+        "rank": 5,
+        "case": "trump-accounts"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "data": {
+        "id": "e-collect-guardian",
+        "source": "form-4547",
+        "target": "fc-guardian-identity",
+        "type": "collects",
+        "claim": "documented",
+        "case": "trump-accounts",
+        "role": "flow",
+        "receipts": [
+          {
+            "id": "r-ta-form",
+            "kind": "omb_icr",
+            "url": "https://www.irs.gov/instructions/i4547",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Instructions for Form 4547 (Rev. Dec 2025), \"Trump Account Election(s)\", OMB control number 1545-2336. Collects: parent/legal-guardian name, address, and SSN/ITIN (Part I); eligible child's name, relationship, address, and SSN (Part II); and elections to open the account and request the $1,000 pilot contribution (Parts III\u2013IV). Authority: \"Sections 530A and 6109 and their regulations require you to provide this information.\"\n"
+          },
+          {
+            "id": "r-ta-icr",
+            "kind": "omb_icr",
+            "url": "https://www.federalregister.gov/documents/2026/04/28/2026-08228/agency-information-collection-activities-comment-request-on-ira-and-trump-account-contribution",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "IRS Paperwork Reduction Act notice, \"Agency Information Collection Activities; Comment Request on IRA and Trump Account Contribution Information\" (FR 2026-08228, Apr 28 2026). Covers the information collection for Trump Account contribution information under OMB control number 1545-2336.\n"
+          }
+        ],
+        "derivation": []
+      },
+      "classes": "documented flow"
+    },
+    {
+      "data": {
+        "id": "e-collect-child-ssn",
+        "source": "form-4547",
+        "target": "fc-child-ssn",
+        "type": "collects",
+        "claim": "documented",
+        "case": "trump-accounts",
+        "role": "flow",
+        "receipts": [
+          {
+            "id": "r-ta-form",
+            "kind": "omb_icr",
+            "url": "https://www.irs.gov/instructions/i4547",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Instructions for Form 4547 (Rev. Dec 2025), \"Trump Account Election(s)\", OMB control number 1545-2336. Collects: parent/legal-guardian name, address, and SSN/ITIN (Part I); eligible child's name, relationship, address, and SSN (Part II); and elections to open the account and request the $1,000 pilot contribution (Parts III\u2013IV). Authority: \"Sections 530A and 6109 and their regulations require you to provide this information.\"\n"
+          }
+        ],
+        "derivation": []
+      },
+      "classes": "documented flow"
+    },
+    {
+      "data": {
+        "id": "e-collect-child-id",
+        "source": "form-4547",
+        "target": "fc-child-identity",
+        "type": "collects",
+        "claim": "documented",
+        "case": "trump-accounts",
+        "role": "flow",
+        "receipts": [
+          {
+            "id": "r-ta-form",
+            "kind": "omb_icr",
+            "url": "https://www.irs.gov/instructions/i4547",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Instructions for Form 4547 (Rev. Dec 2025), \"Trump Account Election(s)\", OMB control number 1545-2336. Collects: parent/legal-guardian name, address, and SSN/ITIN (Part I); eligible child's name, relationship, address, and SSN (Part II); and elections to open the account and request the $1,000 pilot contribution (Parts III\u2013IV). Authority: \"Sections 530A and 6109 and their regulations require you to provide this information.\"\n"
+          }
+        ],
+        "derivation": []
+      },
+      "classes": "documented flow"
+    },
+    {
+      "data": {
+        "id": "e-collect-citizenship",
+        "source": "form-4547",
+        "target": "fc-citizenship",
+        "type": "collects",
+        "claim": "documented",
+        "case": "trump-accounts",
+        "role": "flow",
+        "receipts": [
+          {
+            "id": "r-ta-form",
+            "kind": "omb_icr",
+            "url": "https://www.irs.gov/instructions/i4547",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Instructions for Form 4547 (Rev. Dec 2025), \"Trump Account Election(s)\", OMB control number 1545-2336. Collects: parent/legal-guardian name, address, and SSN/ITIN (Part I); eligible child's name, relationship, address, and SSN (Part II); and elections to open the account and request the $1,000 pilot contribution (Parts III\u2013IV). Authority: \"Sections 530A and 6109 and their regulations require you to provide this information.\"\n"
+          },
+          {
+            "id": "r-ta-prop-reg",
+            "kind": "press_or_agency_statement",
+            "url": "https://www.irs.gov/newsroom/treasury-irs-issue-proposed-regulations-for-trump-accounts-contribution-pilot-program-treasury-department-to-deposit-1000-into-the-account-of-each-eligible-child",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "IRS newsroom statement on the proposed pilot-program regulations: \"Treasury will make one-time $1,000 pilot program contributions to the Trump Accounts of eligible children for whom elections have been made.\" Eligibility: child \"must be born in calendar year 2025, 2026, 2027, or 2028, be a United States citizen, [and] have been issued a Social Security Number.\" The statement does NOT describe how eligibility is verified or whether records are shared/matched between IRS, Treasury, and SSA \u2014 recorded here as absence, not concealment.\n"
+          }
+        ],
+        "derivation": []
+      },
+      "classes": "documented flow"
+    },
+    {
+      "data": {
+        "id": "e-idme-operates",
+        "source": "op-idme",
+        "target": "portal-trump-accounts",
+        "type": "operates",
+        "claim": "documented",
+        "case": "trump-accounts",
+        "role": "flow",
+        "receipts": [
+          {
+            "id": "r-ta-idme",
+            "kind": "press_or_agency_statement",
+            "url": "https://www.irs.gov/trumpaccounts",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "IRS Trump Accounts guidance: to establish an initial Trump account, the taxpayer signs in to their IRS Online Account \u2014 which uses ID.me identity verification \u2014 and submits Form 4547. ID.me is therefore the identity-proofing operator on the intake path. (Observed via agency guidance rather than direct page inspection: form.trumpaccounts.gov 301-redirects to irs.gov/trumpaccounts and the account flow is app/SPA-based.)\n"
+          }
+        ],
+        "derivation": []
+      },
+      "classes": "documented flow"
+    },
+    {
+      "data": {
+        "id": "e-feeds-tap",
+        "source": "form-4547",
+        "target": "sor-tap",
+        "type": "feeds",
+        "claim": "documented",
+        "case": "trump-accounts",
+        "role": "flow",
+        "receipts": [
+          {
+            "id": "r-ta-sorn",
+            "kind": "sorn",
+            "url": "https://www.federalregister.gov/documents/2026/04/17/2026-07514/privacy-act-of-1974-system-of-records",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Privacy Act SORN, \"Department of the Treasury, .031 \u2014 Trump Accounts Program (TAP) System of Records\" (FR 2026-07514, Apr 17 2026). The system \"supports the Treasury's administration, oversight and compliance activities associated with Trump accounts,\" a type of traditional IRA under 26 U.S.C. 530A; records \"enable Treasury to administer and oversee program operations, ensure compliance with applicable statutory requirements, and carry out the objectives for Trump accounts.\"\n"
+          },
+          {
+            "id": "r-ta-treasury-pr",
+            "kind": "press_or_agency_statement",
+            "url": "https://home.treasury.gov/news/press-releases/sb0508",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Treasury press release \"Treasury Announces the Launch of the Trump Accounts App and Next Steps for Trump Accounts\" (sb0508). Families open accounts by filing IRS Form 4547 on TrumpAccounts.gov; Treasury operates the Trump Accounts app; activation emails come only from no-reply@TrumpAccounts.Treasury.gov; Treasury deposits the one-time $1,000 contribution into eligible children's accounts beginning July 4, 2026.\n"
+          }
+        ],
+        "derivation": []
+      },
+      "classes": "documented flow"
+    },
+    {
+      "data": {
+        "id": "e-auth-portal",
+        "source": "instrument-6434",
+        "target": "portal-trump-accounts",
+        "type": "authorizes",
+        "claim": "authorized",
+        "case": "trump-accounts",
+        "role": "authorization",
+        "receipts": [
+          {
+            "id": "r-ta-statute",
+            "kind": "statute",
+            "url": "https://www.govinfo.gov/app/details/PLAW-119publ21",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Section 70204 of Pub. L. 119-21 (One, Big, Beautiful Bill Act, 139 Stat. 72, July 4 2025) enacts IRC \u00a7 6434 and \u00a7 530A. \u00a7 530A establishes \"Trump accounts\" as a type of traditional IRA for an eligible child; \u00a7 6434 directs the Secretary of the Treasury to make a one-time $1,000 pilot-program contribution to the Trump account of each eligible child (a U.S. citizen born 2025\u20132028 with an SSN) for whom an election is made. AUTHORIZES the disbursement; does not, by itself, witness any IRS\u2192Treasury data flow.\n"
+          }
+        ],
+        "derivation": []
+      },
+      "classes": "authorized authorization"
+    },
+    {
+      "data": {
+        "id": "e-auth-disburse",
+        "source": "instrument-6434",
+        "target": "agency-treasury",
+        "type": "authorizes",
+        "claim": "authorized",
+        "case": "trump-accounts",
+        "role": "authorization",
+        "receipts": [
+          {
+            "id": "r-ta-statute",
+            "kind": "statute",
+            "url": "https://www.govinfo.gov/app/details/PLAW-119publ21",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Section 70204 of Pub. L. 119-21 (One, Big, Beautiful Bill Act, 139 Stat. 72, July 4 2025) enacts IRC \u00a7 6434 and \u00a7 530A. \u00a7 530A establishes \"Trump accounts\" as a type of traditional IRA for an eligible child; \u00a7 6434 directs the Secretary of the Treasury to make a one-time $1,000 pilot-program contribution to the Trump account of each eligible child (a U.S. citizen born 2025\u20132028 with an SSN) for whom an election is made. AUTHORIZES the disbursement; does not, by itself, witness any IRS\u2192Treasury data flow.\n"
+          }
+        ],
+        "derivation": [],
+        "authorizes_edge": "e-share-disburse"
+      },
+      "classes": "authorized authorization"
+    },
+    {
+      "data": {
+        "id": "e-share-disburse",
+        "source": "sor-tap",
+        "target": "agency-treasury",
+        "type": "shares_with",
+        "claim": "authorized",
+        "case": "trump-accounts",
+        "role": "flow",
+        "receipts": [
+          {
+            "id": "r-ta-statute",
+            "kind": "statute",
+            "url": "https://www.govinfo.gov/app/details/PLAW-119publ21",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Section 70204 of Pub. L. 119-21 (One, Big, Beautiful Bill Act, 139 Stat. 72, July 4 2025) enacts IRC \u00a7 6434 and \u00a7 530A. \u00a7 530A establishes \"Trump accounts\" as a type of traditional IRA for an eligible child; \u00a7 6434 directs the Secretary of the Treasury to make a one-time $1,000 pilot-program contribution to the Trump account of each eligible child (a U.S. citizen born 2025\u20132028 with an SSN) for whom an election is made. AUTHORIZES the disbursement; does not, by itself, witness any IRS\u2192Treasury data flow.\n"
+          }
+        ],
+        "derivation": [],
+        "contestation": {
+          "notice": "SORN .031 states an administration/oversight purpose; no individualized notice of the record flow that drives disbursement",
+          "appeal": "none_identified"
+        },
+        "authorized_by": "instrument-6434",
+        "authorized_by_label": "IRC \u00a7 6434 / \u00a7 530A"
+      },
+      "classes": "authorized flow"
+    },
+    {
+      "data": {
+        "id": "e-consume-eligibility",
+        "source": "sor-tap",
+        "target": "ds-eligibility",
+        "type": "consumed_by",
+        "claim": "documented",
+        "case": "trump-accounts",
+        "role": "flow",
+        "receipts": [
+          {
+            "id": "r-ta-prop-reg",
+            "kind": "press_or_agency_statement",
+            "url": "https://www.irs.gov/newsroom/treasury-irs-issue-proposed-regulations-for-trump-accounts-contribution-pilot-program-treasury-department-to-deposit-1000-into-the-account-of-each-eligible-child",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "IRS newsroom statement on the proposed pilot-program regulations: \"Treasury will make one-time $1,000 pilot program contributions to the Trump Accounts of eligible children for whom elections have been made.\" Eligibility: child \"must be born in calendar year 2025, 2026, 2027, or 2028, be a United States citizen, [and] have been issued a Social Security Number.\" The statement does NOT describe how eligibility is verified or whether records are shared/matched between IRS, Treasury, and SSA \u2014 recorded here as absence, not concealment.\n"
+          }
+        ],
+        "derivation": [],
+        "contestation": {
+          "notice": "Eligibility criteria published in the proposed rule and SORN",
+          "appeal": "a subject may correct their own record, but no process targets the composed eligibility determination"
+        }
+      },
+      "classes": "documented flow"
+    },
+    {
+      "data": {
+        "id": "e-consume-compliance",
+        "source": "sor-tap",
+        "target": "ds-compliance",
+        "type": "consumed_by",
+        "claim": "documented",
+        "case": "trump-accounts",
+        "role": "flow",
+        "receipts": [
+          {
+            "id": "r-ta-sorn",
+            "kind": "sorn",
+            "url": "https://www.federalregister.gov/documents/2026/04/17/2026-07514/privacy-act-of-1974-system-of-records",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Privacy Act SORN, \"Department of the Treasury, .031 \u2014 Trump Accounts Program (TAP) System of Records\" (FR 2026-07514, Apr 17 2026). The system \"supports the Treasury's administration, oversight and compliance activities associated with Trump accounts,\" a type of traditional IRA under 26 U.S.C. 530A; records \"enable Treasury to administer and oversee program operations, ensure compliance with applicable statutory requirements, and carry out the objectives for Trump accounts.\"\n"
+          }
+        ],
+        "derivation": [],
+        "contestation": {
+          "notice": "SORN .031 names oversight, compliance, and integrity as system purposes",
+          "appeal": "none_identified"
+        }
+      },
+      "classes": "documented flow"
+    },
+    {
+      "data": {
+        "id": "e-infer-household",
+        "source": "fc-child-ssn",
+        "target": "attr-household",
+        "type": "enables_inference",
+        "claim": "inferred",
+        "case": "trump-accounts",
+        "role": "inference",
+        "receipts": [
+          {
+            "id": "r-ta-form",
+            "kind": "omb_icr",
+            "url": "https://www.irs.gov/instructions/i4547",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Instructions for Form 4547 (Rev. Dec 2025), \"Trump Account Election(s)\", OMB control number 1545-2336. Collects: parent/legal-guardian name, address, and SSN/ITIN (Part I); eligible child's name, relationship, address, and SSN (Part II); and elections to open the account and request the $1,000 pilot contribution (Parts III\u2013IV). Authority: \"Sections 530A and 6109 and their regulations require you to provide this information.\"\n"
+          }
+        ],
+        "derivation": [
+          "e-collect-guardian",
+          "e-collect-child-ssn",
+          "e-collect-child-id"
+        ]
+      },
+      "classes": "inferred inference"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "trump-accounts",
+      "title": "TrumpAccounts.gov / Form 4547 \u2014 child + guardian intake into the Treasury TAP system of records",
+      "headline": "How a child-savings form becomes a joinable government record",
+      "dek": "Documented records show TrumpAccounts.gov and IRS Form 4547 collecting a child's and a guardian's identity \u2014 including both Social Security numbers \u2014 and routing them into a Treasury system of record that drives pilot-eligibility and oversight decisions.\n",
+      "why": "These are not just values. They are join keys: stable identifiers and relationship fields that can link a child, a household, a tax filer, benefit eligibility, and account administration into one composable record.\n",
+      "summary": "TrumpAccounts.gov collects child and parent/guardian identity (including both SSNs) via IRS Form 4547 to open a Trump account (a \u00a7 530A IRA) and elect a one-time $1,000 Treasury pilot contribution. Intake is identity-proofed through ID.me and lands in Treasury's \".031 \u2014 Trump Accounts Program (TAP)\" Privacy Act system of records, which exists for administration, oversight, and compliance. The statute directs Treasury to disburse the $1,000, but no public document witnesses how the eligibility records move IRS\u2192Treasury or are matched against SSA \u2014 so those edges are AUTHORIZED, not documented. The composed parent\u2194child identity linkage is an inferred household graph.\n",
+      "status": "active"
+    }
+  ]
+}

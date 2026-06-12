@@ -1,0 +1,23 @@
+# FAILURE FIXTURE — expects rule INFERRED_NO_DERIVATION.
+# An inferred edge must show its derivation (parent edge ids).
+case_id: fail-inferred-no-derivation
+title: "Inferred edge with empty derivation"
+status: emerging
+date_surfaced: 2026-06-12
+receipts_inline:
+  - id: r-x
+    kind: pia
+    url: https://example.gov/pia/x
+    retrieved: 2026-06-01
+    basis: "PIA lists the field class"
+nodes:
+  - { id: fc-a, type: field_class, label: "Field class A" }
+  - { id: attr-b, type: field_class, label: "Derived attribute B" }
+edges:
+  - id: e-bad-2
+    type: enables_inference
+    from: fc-a
+    to: attr-b
+    claim: inferred
+    receipts: [r-x]
+    derivation: []   # <-- violation: inferred requires non-empty derivation

@@ -1,0 +1,12 @@
+id: r-ta-statute
+kind: statute
+url: https://www.govinfo.gov/app/details/PLAW-119publ21
+archived: ""   # TODO(snapshot.py, Phase 5)
+retrieved: 2026-06-12
+basis: >
+  Section 70204 of Pub. L. 119-21 (One, Big, Beautiful Bill Act, 139 Stat. 72, July 4 2025)
+  enacts IRC § 6434 and § 530A. § 530A establishes "Trump accounts" as a type of traditional
+  IRA for an eligible child; § 6434 directs the Secretary of the Treasury to make a one-time
+  $1,000 pilot-program contribution to the Trump account of each eligible child (a U.S. citizen
+  born 2025–2028 with an SSN) for whom an election is made. AUTHORIZES the disbursement; does
+  not, by itself, witness any IRS→Treasury data flow.

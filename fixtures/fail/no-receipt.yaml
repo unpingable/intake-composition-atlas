@@ -1,0 +1,17 @@
+# FAILURE FIXTURE — expects rule EDGE_NO_RECEIPT.
+# An edge with no receipts must not ship: no edge without a receipt.
+case_id: fail-no-receipt
+title: "Edge with no receipt"
+status: emerging
+date_surfaced: 2026-06-12
+receipts_inline: []
+nodes:
+  - { id: portal-x, type: portal, label: "Portal X" }
+  - { id: fc-y, type: field_class, label: "Field class Y" }
+edges:
+  - id: e-bad-1
+    type: collects
+    from: portal-x
+    to: fc-y
+    claim: documented
+    receipts: []   # <-- violation

@@ -1,0 +1,31 @@
+name: lint-and-build
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Proposal-only doctrine: CI validates and builds, it NEVER auto-commits content.
+# It fails loudly on any doctrine error.
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install deps
+        run: pip install -r tools/requirements.txt
+      - name: Lint fixtures (assert linter catches violations for the right rule)
+        run: python tools/test_lint.py
+      - name: Lint cases + receipts
+        run: python tools/lint.py
+      - name: Build site data
+        run: python tools/build.py
+      - name: Fail if build produced uncommitted changes to docs/data
+        run: |
+          if [ -n "$(git status --porcelain docs/data)" ]; then
+            echo "::error::docs/data is stale — run 'python tools/build.py' and commit the result."
+            git --no-pager diff -- docs/data
+            exit 1
+          fi

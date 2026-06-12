@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intake Composition Atlas</title>
+  <meta name="description" content="A typed, receipt-backed map of how narrow federal intake surfaces compose into a broader identity and decision graph — every edge labeled by what kind of claim it is.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Intake Composition Atlas">
+  <meta property="og:description" content="What is proven, what is permitted, what is possible — edge by edge.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #0a0a0a; color: #e0e0e0; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .container { max-width: 880px; width: 100%; padding: 64px 24px; }
+    h1 { font-size: 34px; font-weight: 700; color: #fff; letter-spacing: -0.02em; margin-bottom: 14px; }
+    .thesis { font-size: 17px; color: #888; line-height: 1.65; margin-bottom: 40px; max-width: 660px; }
+    .claimkey { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 40px; }
+    .ck { background: #111; border: 1px solid #222; border-radius: 8px; padding: 16px 14px; }
+    .ck .dot { width: 26px; height: 0; border-top-width: 3px; border-top-style: solid; margin-bottom: 10px; }
+    .ck-documented .dot { border-color: #4fc3f7; }
+    .ck-authorized .dot { border-color: #f5a623; border-top-style: dashed; }
+    .ck-inferred .dot { border-color: #bd7dff; border-top-style: dotted; }
+    .ck-speculative .dot { border-color: #555; border-top-style: dotted; }
+    .ck h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #fff; margin-bottom: 6px; }
+    .ck p { font-size: 12px; color: #888; line-height: 1.5; }
+    .cta { display: inline-block; background: #1a1a1a; border: 1px solid #333; color: #e0e0e0;
+      padding: 12px 22px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 600;
+      transition: border-color .2s, background .2s; }
+    .cta:hover { border-color: #4fc3f7; background: #161616; }
+    .caption { font-size: 13px; color: #666; margin-top: 14px; font-style: italic; }
+    footer { font-size: 12px; color: #555; line-height: 1.7; margin-top: 48px; border-top: 1px solid #1a1a1a; padding-top: 20px; }
+    footer a { color: #888; }
+    @media (max-width: 640px) { .claimkey { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Intake Composition Atlas</h1>
+    <div class="thesis">
+      Populations exposed to inferences and decisions composed <em>outside their effective
+      contestation surface.</em> Narrow federal intake surfaces — a portal, a single form —
+      compose into a broader identity and decision graph. This is a typed, receipt-backed map of
+      that composition: every edge carries exactly one claim type and a citation to a public
+      record. Sibling to the
+      <a href="https://github.com/unpingable/grid-dependency-atlas" style="color:#4fc3f7">Grid Dependency Atlas</a>.
+    </div>
+
+    <div class="claimkey">
+      <div class="ck ck-documented"><div class="dot"></div><h3>Documented</h3><p>A public record says the flow exists.</p></div>
+      <div class="ck ck-authorized"><div class="dot"></div><h3>Authorized</h3><p>An instrument permits it; no evidence it occurs.</p></div>
+      <div class="ck ck-inferred"><div class="dot"></div><h3>Inferred</h3><p>Composition makes it derivable.</p></div>
+      <div class="ck ck-speculative"><div class="dot"></div><h3>Speculative</h3><p>Incentive analysis only. Hidden by default.</p></div>
+    </div>
+
+    <a class="cta" href="graph/">Open the composition graph &rarr;</a>
+    <div class="caption">Default view: documented edges only. Toggle on authorized, then inferred — the graph inflates. That delta is the finding.</div>
+
+    <footer>
+      The people who bear the consequences cannot see the join.<br>
+      No edge without a receipt. Signed is not witnessed. No PII. Public surfaces only.<br>
+      <a href="https://github.com/unpingable/intake-composition-atlas">Source</a> · Apache 2.0
+    </footer>
+  </div>
+</body>
+</html>

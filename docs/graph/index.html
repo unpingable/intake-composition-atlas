@@ -5,6 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Composition Graph — Intake Composition Atlas</title>
   <meta name="description" content="How one federal intake form creates joinable identity records — a documented path with receipts.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="How a child-savings form becomes a joinable government record">
+  <meta property="og:description" content="The documented path from TrumpAccounts.gov and Form 4547 into a Treasury system of record — every edge labeled by what kind of claim it is.">
+  <meta property="og:url" content="https://unpingable.github.io/intake-composition-atlas/graph/">
+  <meta property="og:image" content="https://unpingable.github.io/intake-composition-atlas/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="How a child-savings form becomes a joinable government record">
+  <meta name="twitter:description" content="A typed, receipt-backed composition map — what is proven, what is permitted, what is possible.">
+  <meta name="twitter:image" content="https://unpingable.github.io/intake-composition-atlas/og-image.png">
   <link rel="stylesheet" href="https://unpkg.com/@xyflow/react@12.3.5/dist/style.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -57,7 +68,11 @@
     .station.primary { font-size: 14.5px; font-weight: 700; padding: 11px 15px; }
     .station.sel { box-shadow: 0 0 0 2px #fff; }
     .station .st-type { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #707983; font-weight: 700; margin-top: 3px; }
-    .lane-head { font-size: 12px; font-weight: 700; letter-spacing: 0.03em; color: #828c97; white-space: nowrap; pointer-events: none; text-align: center; }
+    .lane-head { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11.5px; font-weight: 600;
+      color: #99a1ab; pointer-events: none; text-align: center; line-height: 1.2; }
+    .lane-head .lane-num { flex-shrink: 0; width: 17px; height: 17px; border-radius: 50%; background: #0c1a20;
+      border: 1px solid #2b5566; color: var(--documented); font-size: 10px; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center; }
 
     .drawer { background: var(--panel); border-top: 1px solid var(--line); height: 204px; transition: height .2s ease; display: flex; flex-direction: column; min-height: 0; }
     .drawer.collapsed { height: 44px; }
@@ -77,6 +92,8 @@
     .type-key { display: flex; flex-wrap: wrap; gap: 5px 13px; margin-top: 11px; }
     .type-key .tk { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: #9aa0a8; }
     .type-key .tk .c { width: 10px; height: 10px; border-radius: 3px; border: 1px solid; flex-shrink: 0; }
+    .layer-note { font-size: 11px; color: #5b626b; line-height: 1.5; margin-top: 11px; font-style: italic; }
+    .layer-note b { color: #828c97; font-weight: 600; font-style: normal; }
     .ln { display: inline-block; width: 20px; height: 0; vertical-align: middle; margin-right: 4px; }
     .ln.doc { border-top: 2.5px solid var(--documented); }
     .ln.auth { border-top: 2.5px dashed var(--authorized); }
@@ -162,6 +179,15 @@
   const LANE_LABELS = { authority:'Legal authority', intake:'Where people enter', collection:'What the form asks',
     data:'Record fields created', custody:'Where the record goes', inference:'Possible composition',
     decision:'Decisions it supports', external:'External power' };
+  // numbered callouts on the documented spine (1–5, fixed regardless of toggles).
+  // context lanes (authority/inference/external) are unnumbered — they extend, not narrate.
+  const CALLOUTS = {
+    intake:     { num:1, text:'People enter through the portal' },
+    collection: { num:2, text:'Form 4547 creates the record' },
+    data:       { num:3, text:'Fields become joinable keys' },
+    custody:    { num:4, text:'Treasury TAP receives the record' },
+    decision:   { num:5, text:'Eligibility & oversight decisions' },
+  };
   const clamp = (lo,v,hi) => Math.max(lo, Math.min(v, hi));
   const widthOf = n => clamp(110, 28 + (n.short_label||n.id).length * 8.4, 200);
 
@@ -207,7 +233,12 @@
       <${Handle} type="source" position=${Position.Right} isConnectable=${false} />
     </div>`;
   }
-  function LaneNode({ data }) { return html`<div class="lane-head">${data.label}</div>`; }
+  function LaneNode({ data }) {
+    return html`<div class="lane-head">
+      ${data.num ? html`<span class="lane-num">${data.num}</span>` : null}
+      <span>${data.text}</span>
+    </div>`;
+  }
   const nodeTypes = { station: StationNode, lane: LaneNode };
 
   function Toolbar({ active, setActive, layers }) {
@@ -287,6 +318,7 @@
           <div class="type-key">
             ${types.map(t => html`<span key=${t} class="tk"><span class="c" style=${{ background: NODE[t].c+'22', borderColor: NODE[t].c }}></span>${NODE[t].label}</span>`)}
           </div>
+          <div class="layer-note">Toggling <b>Legal authority</b> or <b>Possible inferences</b> adds context layers — these are not all documented data flows.</div>
         </div>
         <div class="col col-fields">
           <h4>Fields this case documents</h4>
@@ -343,8 +375,12 @@
         return { id:n.data.id, type:'station', position:{ x:p.x, y:p.y }, draggable:false, selectable:true, width:p.w, height:NODE_H,
           data: { ...n.data, w:p.w, sel: sel&&sel.kind==='node'&&sel.data.id===n.data.id } };
       });
-      const lanes = laneHeaders.map(h => ({ id:h.id, type:'lane', position:{ x:h.x-75, y:h.y }, width:150, height:18,
-        selectable:false, draggable:false, focusable:false, data:{ label:(LANE_LABELS[h.lane]||h.lane) } }));
+      const lanes = laneHeaders.map(h => {
+        const co = CALLOUTS[h.lane];
+        return { id:h.id, type:'lane', position:{ x:h.x-100, y:h.y }, width:200, height:34,
+          selectable:false, draggable:false, focusable:false,
+          data:{ num: co ? co.num : null, text: co ? co.text : (LANE_LABELS[h.lane]||h.lane) } };
+      });
       return stations.concat(lanes);
     }, [graph, pos, laneHeaders, visIds, sel]);
 
@@ -357,7 +393,9 @@
         labelStyle: ann ? { fill:'#8a6f28', fontSize:9, textTransform:'uppercase', letterSpacing:'0.06em' } : undefined,
         labelBgStyle: ann ? { fill:'#0d0f13' } : undefined,
         selected: sel && sel.kind==='edge' && sel.data.id===d.id,
-        style: { stroke: color, strokeWidth: d.claim==='documented' ? 2 : 1.6, opacity: ann ? 0.4 : 0.94,
+        // documented cyan spine stays dominant; authority/inference annotate and extend, dimmer
+        style: { stroke: color, strokeWidth: d.claim==='documented' ? 2 : 1.5,
+          opacity: ann ? 0.35 : (d.claim==='documented' ? 0.95 : 0.5),
           strokeDasharray: d.claim==='documented' ? undefined : (d.claim==='inferred' ? '2 4' : (ann ? '1 4' : '6 5')) },
         data: d,
       };

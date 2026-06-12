@@ -40,6 +40,14 @@ receipt's `retrieved` date exceeds its window. Staleness is surfaced, not buried
 `snapshot.py` (archive.org integration + automated freshness sweep) is a Phase 5
 deliverable, not yet built.
 
+**Archive retry policy (lookup-first, not save-first).** Some receipts carry an empty
+`archived:` with a "save attempted, no snapshot returned yet (retry)" note — Save Page Now
+queued the capture but the snapshot was not yet indexed. Do **not** re-trigger saves in a
+loop (that just adds noise and risks throttling). To retry: query the CDX / availability API
+for the original URL first; wire the snapshot if one now exists; only trigger a fresh Save
+Page Now if none exists after a reasonable delay. Retries are currency cleanup, never a
+claim/layout change.
+
 ## Currency is not claim (sweep invariant)
 
 When the freshness sweep is built, it operates on a **currency axis** that is orthogonal to

@@ -40,7 +40,7 @@
     .btn:hover { background: #14171c; color: #fff; }
 
     /* far view: headline + nut graf lead the story */
-    .editorial { padding: 14px 22px 13px; border-bottom: 1px solid var(--line); background: #0a0c0f; }
+    .editorial { padding: 11px 22px 10px; border-bottom: 1px solid var(--line); background: #0a0c0f; }
     .editorial h1 { font-size: 19px; font-weight: 700; color: #fff; letter-spacing: -0.015em; line-height: 1.25; margin-bottom: 5px; }
     .editorial .dek { font-size: 13px; color: #9aa0a8; line-height: 1.55; max-width: 920px; }
     .editorial .dek b { color: #c4cad2; font-weight: 600; }
@@ -66,7 +66,7 @@
     .lane-head .num { display:inline-block; width:17px; height:17px; line-height:16px; border-radius:50%; border:1px solid #2c333c; color:#6b7480; font-size:10px; margin-right:6px; text-align:center; }
 
     /* near view: bottom drawer */
-    .drawer { background: var(--panel); border-top: 1px solid var(--line); height: 226px; transition: height .2s ease; display: flex; flex-direction: column; min-height: 0; }
+    .drawer { background: var(--panel); border-top: 1px solid var(--line); height: 204px; transition: height .2s ease; display: flex; flex-direction: column; min-height: 0; }
     .drawer.collapsed { height: 44px; }
     .drawer-bar { display: flex; align-items: center; gap: 12px; padding: 0 22px; height: 44px; flex-shrink: 0; cursor: pointer; }
     .drawer-bar .grip { width: 34px; height: 4px; border-radius: 3px; background: #2a2f37; }
@@ -203,7 +203,6 @@
       <${Handle} type="target" position=${Position.Left} isConnectable=${false} />
       <div>${data.short_label}</div>
       <div class="st-type">${meta.label}</div>
-      ${data.authBadge ? html`<div class="authchip">⚖ ${data.authBadge}</div>` : null}
       <${Handle} type="source" position=${Position.Right} isConnectable=${false} />
     </div>`;
   }
@@ -212,14 +211,17 @@
   }
   const nodeTypes = { station: StationNode, lane: LaneNode };
 
+  const FIT = { padding: 0.14, includeHiddenNodes: false, minZoom: 0.4, maxZoom: 1.0 };
   function Fitter({ activeKey }) {
-    const inited = useNodesInitialized();
+    const inited = useNodesInitialized();   // true only after custom nodes are measured
     const rf = useReactFlow();
     useEffect(() => {
       if (!inited) return;
-      const id = requestAnimationFrame(() =>
-        rf.fitView({ padding: 0.22, includeHiddenNodes: false, minZoom: 0.5, maxZoom: 1.12, duration: 250 }));
-      return () => cancelAnimationFrame(id);
+      // fit once nodes are measured, plus a settle-pass — bounds are correct now, so it
+      // frames the whole spine instead of over-zooming on unmeasured (tiny) bounds.
+      const raf = requestAnimationFrame(() => rf.fitView({ ...FIT, duration: 0 }));
+      const t = setTimeout(() => rf.fitView({ ...FIT, duration: 200 }), 180);
+      return () => { cancelAnimationFrame(raf); clearTimeout(t); };
     }, [inited, activeKey]);
     return null;
   }
@@ -234,7 +236,7 @@
       ${LAYERS.map(L => html`<label key=${L.claim} class=${`toggle ${L.claim}${active.has(L.claim)?' on':''}`}
           onClick=${() => { const n=new Set(active); n.has(L.claim)?n.delete(L.claim):n.add(L.claim); setActive(n); }}>
         <span class="swatch"></span>${L.label}</label>`)}
-      <button class="btn" onClick=${() => rf.fitView({ padding: 0.22, includeHiddenNodes: false, minZoom: 0.5, maxZoom: 1.12, duration: 300 })}>Fit</button>
+      <button class="btn" onClick=${() => rf.fitView({ ...FIT, duration: 300 })}>Fit</button>
     </header>`;
   }
 
@@ -362,13 +364,23 @@
       const stations = graph.nodes.map(n => {
         const p = pos[n.data.id] || { x:0, y:0, w:120 };
         return { id:n.data.id, type:'station', position:{ x:p.x, y:p.y }, draggable:false, selectable:true,
+          // explicit dims -> fitView bounds are correct on first paint (no over-zoom crop)
+          width: p.w, height: 56,
           hidden: !visibleNodeIds.has(n.data.id),
-          data: { ...n.data, w:p.w, authBadge: authByNode[n.data.id], sel: sel&&sel.kind==='node'&&sel.data.id===n.data.id } };
+          data: { ...n.data, w:p.w, sel: sel&&sel.kind==='node'&&sel.data.id===n.data.id } };
       });
-      const lanes = laneHeaders.map(h => ({ ...h,
+      const lanes = laneHeaders.map(h => ({ ...h, width: 150, height: 20,
         hidden: !graph.nodes.some(n => n.data.lane === h.data.lane && visibleNodeIds.has(n.data.id)) }));
       return stations.concat(lanes);
-    }, [graph, pos, visibleNodeIds, sel, laneHeaders, authByNode]);
+    }, [graph, pos, visibleNodeIds, sel, laneHeaders]);
+
+    // bound the pannable area to the graphic + margin — a framed graphic, not a void to drift into
+    const translateExtent = useMemo(() => {
+      let a=Infinity,b=Infinity,c=-Infinity,d=-Infinity;
+      graph.nodes.forEach(n => { const p=pos[n.data.id]; if(!p) return;
+        a=Math.min(a,p.x); b=Math.min(b,p.y-70); c=Math.max(c,p.x+(p.w||120)); d=Math.max(d,p.y+56); });
+      const M=320; return [[a-M,b-M],[c+M,d+M]];
+    }, [graph, pos]);
 
     const rfEdges = useMemo(() => visibleEdges.map(e => {
       const d = e.data, color = CLAIM[d.claim] || '#888', ann = d.role === 'authorization';
@@ -397,7 +409,9 @@
       <div class="stage">
         <${ReactFlow}
           nodes=${rfNodes} edges=${rfEdges} nodeTypes=${nodeTypes}
-          minZoom=${0.35} maxZoom=${1.8}
+          fitView fitViewOptions=${FIT}
+          onInit=${inst => inst.fitView(FIT)}
+          minZoom=${0.4} maxZoom=${1.0} translateExtent=${translateExtent}
           nodesDraggable=${false} nodesConnectable=${false} elementsSelectable=${true}
           proOptions=${{ hideAttribution: true }}
           onNodeClick=${(_, node) => { if (node.type === 'station') setSel({ kind:'node', data: graph.nodes.find(n=>n.data.id===node.id).data }); }}

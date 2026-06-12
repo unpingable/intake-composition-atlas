@@ -36,14 +36,10 @@
     .toggle.authorized.on { border-color: #5a4516; background: #1c1407; }
     .toggle.inferred.on   { border-color: #4a3a66; background: #160e22; }
     .toggle.speculative.on{ border-color: #33383f; background: #14161a; }
-    .btn { font-size: 12px; color: #aeb4bc; background: #0e1014; border: 1px solid var(--line); border-radius: 6px; padding: 5px 11px; cursor: pointer; }
-    .btn:hover { background: #14171c; color: #fff; }
 
-    /* far view: headline + nut graf lead the story */
     .editorial { padding: 11px 22px 10px; border-bottom: 1px solid var(--line); background: #0a0c0f; }
     .editorial h1 { font-size: 19px; font-weight: 700; color: #fff; letter-spacing: -0.015em; line-height: 1.25; margin-bottom: 5px; }
     .editorial .dek { font-size: 13px; color: #9aa0a8; line-height: 1.55; max-width: 920px; }
-    .editorial .dek b { color: #c4cad2; font-weight: 600; }
 
     .stage { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
     .react-flow { background:
@@ -51,21 +47,30 @@
         linear-gradient(#0a0c0f, #060708); }
     .react-flow__handle { opacity: 0; pointer-events: none; min-width: 1px; min-height: 1px; }
     .react-flow__attribution { display: none; }
+    .react-flow__pane { cursor: default; }
+
+    /* on-figure legend — findable, top-right of the graphic */
+    .legend { position: absolute; top: 12px; right: 12px; z-index: 6; background: rgba(12,14,18,0.86);
+      backdrop-filter: blur(6px); border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; font-size: 11px; }
+    .legend h5 { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.1em; color: #555b63; margin: 0 0 7px; }
+    .legend .lrow { display: flex; align-items: center; gap: 8px; margin: 4px 0; color: #9aa0a8; white-space: nowrap; }
+    .legend .nchip { width: 10px; height: 10px; border-radius: 3px; border: 1px solid; flex-shrink: 0; }
+    .legend .lln { width: 22px; height: 0; flex-shrink: 0; }
+    .legend .lln.doc { border-top: 2.5px solid var(--documented); }
+    .legend .lln.auth { border-top: 2.5px dashed var(--authorized); }
+    .legend .lln.inf { border-top: 2.5px dotted var(--inferred); }
+    .legend .div { height: 1px; background: var(--line); margin: 8px 0 6px; }
 
     .station { border: 1.5px solid #888; border-radius: 9px; background: #0e1116; padding: 9px 13px;
-      text-align: center; color: #eef1f5; font-size: 13.5px; font-weight: 600; line-height: 1.25; cursor: pointer;
+      text-align: center; color: #eef1f5; font-size: 13.5px; font-weight: 600; line-height: 1.2; cursor: pointer;
       box-shadow: 0 1px 0 rgba(0,0,0,0.4); transition: box-shadow .15s, background .15s; position: relative; }
     .station::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 9px 0 0 9px; background: var(--accent); }
     .station:hover { background: #141821; box-shadow: 0 0 0 1px var(--accent); }
     .station.primary { font-size: 14.5px; font-weight: 700; padding: 11px 15px; }
     .station.sel { box-shadow: 0 0 0 2px #fff; }
     .station .st-type { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #707983; font-weight: 700; margin-top: 3px; }
-    .station .authchip { display:inline-block; font-size: 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--authorized); margin-top: 4px; }
-    /* lane headers: structural, not subliminal */
-    .lane-head { font-size: 12.5px; font-weight: 700; letter-spacing: 0.04em; color: #828c97; white-space: nowrap; pointer-events: none; text-align: center; }
-    .lane-head .num { display:inline-block; width:17px; height:17px; line-height:16px; border-radius:50%; border:1px solid #2c333c; color:#6b7480; font-size:10px; margin-right:6px; text-align:center; }
+    .lane-head { font-size: 12px; font-weight: 700; letter-spacing: 0.03em; color: #828c97; white-space: nowrap; pointer-events: none; text-align: center; }
 
-    /* near view: bottom drawer */
     .drawer { background: var(--panel); border-top: 1px solid var(--line); height: 204px; transition: height .2s ease; display: flex; flex-direction: column; min-height: 0; }
     .drawer.collapsed { height: 44px; }
     .drawer-bar { display: flex; align-items: center; gap: 12px; padding: 0 22px; height: 44px; flex-shrink: 0; cursor: pointer; }
@@ -123,19 +128,17 @@
     .boot { display: grid; place-items: center; height: 100%; color: #6b7280; font-size: 13px; text-align: center; }
     .boot a { color: var(--documented); }
     @media (max-width: 1000px) { .col-fields { display: none; } }
-    @media (max-width: 760px) { .col-shows { flex-basis: 220px; } .sel-grid { flex-direction: column; } .sel-meta { flex: none; } }
+    @media (max-width: 760px) { .col-shows { flex-basis: 220px; } .sel-grid { flex-direction: column; } .sel-meta { flex: none; } .legend { display: none; } }
   </style>
 </head>
 <body>
   <div id="root"><div class="boot">Loading composition story…</div></div>
 
   <script type="module">
-  import React, { useState, useMemo, useEffect } from 'https://esm.sh/react@18.3.1';
+  import React, { useState, useMemo, useEffect, useRef } from 'https://esm.sh/react@18.3.1';
   import { createRoot } from 'https://esm.sh/react-dom@18.3.1/client';
   import htm from 'https://esm.sh/htm@3.1.1';
-  import { ReactFlow, Background, Controls, Handle, Position, MarkerType,
-           ReactFlowProvider, useReactFlow, useNodesInitialized } from 'https://esm.sh/@xyflow/react@12.3.5?deps=react@18.3.1,react-dom@18.3.1';
-  import ELK from 'https://esm.sh/elkjs@0.9.3/lib/elk.bundled.js';
+  import { ReactFlow, Background, Handle, Position, MarkerType } from 'https://esm.sh/@xyflow/react@12.3.5?deps=react@18.3.1,react-dom@18.3.1';
   const html = htm.bind(React.createElement);
 
   const NODE = {
@@ -159,78 +162,64 @@
   const EDGE_VERB = { collects:'collects', hosts:'presents', feeds:'sends intake into', operates:'runs',
     shares_with:'discloses records to', matches_against:'cross-matches records with',
     consumed_by:'is used to drive', authorizes:'permits', enables_inference:'composes into' };
-  // reader-facing layer controls. Note: these select by CLAIM STRENGTH, not lane — so the
-  // weakest claim is labeled plainly "Speculative" (not a lane name like "External power",
-  // which would conflate the two axes the whole visual grammar exists to separate).
   const LAYERS = [
     { claim:'documented',  label:'Documented path' },
     { claim:'authorized',  label:'Legal authority' },
     { claim:'inferred',    label:'Possible inferences' },
     { claim:'speculative', label:'Speculative' },
   ];
-  // editorial lane names — the map regions, in plain language
   const LANE_LABELS = { authority:'Legal authority', intake:'Where people enter', collection:'What the form asks',
     data:'Record fields created', custody:'Where the record goes', inference:'Possible composition',
     decision:'Decisions it supports', external:'External power' };
   const clamp = (lo,v,hi) => Math.max(lo, Math.min(v, hi));
-  const LANE_W = 250;
+  const widthOf = n => clamp(110, 28 + (n.short_label||n.id).length * 8.4, 200);
 
-  async function elkLayout(graph) {
-    const elk = new ELK();
-    const rankById = {};
-    graph.nodes.forEach(n => { rankById[n.data.id] = n.data.rank ?? 0; });
-    const children = graph.nodes.map(n => ({
-      id: n.data.id,
-      width: clamp(104, 26 + (n.data.short_label||n.data.id).length * 8.4, 198),
-      height: 50,
-      layoutOptions: { 'elk.partitioning.partition': String(n.data.rank ?? 0) },
-    }));
-    const edges = graph.edges.map(e => ({ id: e.data.id, sources: [e.data.source], targets: [e.data.target] }));
-    const res = await elk.layout({
-      id: 'root',
-      layoutOptions: { 'elk.algorithm':'layered', 'elk.direction':'RIGHT', 'elk.partitioning.activate':'true',
-        'elk.layered.spacing.nodeNodeBetweenLayers':'120', 'elk.spacing.nodeNode':'34',
-        'elk.layered.nodePlacement.strategy':'NETWORK_SIMPLEX' },
-      children, edges,
-    });
+  // ---- fixed editorial layout: PLACE the spine into the frame, sized to the container ----
+  // x = even column per visible stage (semantic order); y = stacked, centered, within frame.
+  // No fitView, no pan/zoom — the whole sentence fits by construction.
+  const NODE_H = 56, TOP = 64, BOT = 26;
+  function editorialLayout(graph, active, W, H) {
+    const ord = {}; graph.nodes.forEach((n,i)=>{ ord[n.data.id]=i; });
+    const visEdges = graph.edges.filter(e => active.has(e.data.claim));
+    const visIds = new Set(); visEdges.forEach(e => { visIds.add(e.data.source); visIds.add(e.data.target); });
+    const nodes = graph.nodes.filter(n => visIds.has(n.data.id)).map(n => n.data);
+    if (!nodes.length) return { pos:{}, laneHeaders:[], visIds, visEdges };
+    const ranks = [...new Set(nodes.map(n => n.rank))].sort((a,b)=>a-b);
+    const maxHalf = Math.max(90, ...nodes.map(n => widthOf(n)/2));
+    const L = maxHalf + 26, R = Math.max(L + 1, W - maxHalf - 26);
+    const colX = {}; ranks.forEach((r,i)=>{ colX[r] = ranks.length === 1 ? (L+R)/2 : L + (R-L) * i/(ranks.length-1); });
+    const avail = Math.max(120, H - TOP - BOT), midY = TOP + avail/2;
     const pos = {};
-    res.children.forEach(c => { pos[c.id] = { x: rankById[c.id] * LANE_W, y: c.y, w: c.width, h: c.height }; });
-    return pos;
+    ranks.forEach(r => {
+      const col = nodes.filter(n => n.rank === r).sort((a,b)=> ord[a.id]-ord[b.id]);
+      const rowH = Math.min(94, col.length>1 ? avail/col.length : avail/2);
+      col.forEach((n,j) => {
+        const w = widthOf(n), cy = midY + (j-(col.length-1)/2)*rowH;
+        pos[n.id] = { x: colX[r]-w/2, y: cy-NODE_H/2, w };
+      });
+    });
+    const laneHeaders = ranks.map(r => {
+      const lane = nodes.find(n => n.rank===r).lane;
+      return { id:'__lane_'+r, lane, x: colX[r], y: TOP-44 };
+    });
+    return { pos, laneHeaders, visIds, visEdges };
   }
 
   function StationNode({ data }) {
     const meta = NODE[data.type] || { c:'#888', label:data.type };
     const primary = ['portal','system_of_record','decision_surface'].includes(data.type);
-    const cls = `station${primary?' primary':''}${data.sel?' sel':''}`;
-    return html`<div class=${cls} style=${{ '--accent': meta.c, borderColor: meta.c, width: (data.w||120)+'px' }}>
+    return html`<div class=${`station${primary?' primary':''}${data.sel?' sel':''}`}
+        style=${{ '--accent': meta.c, borderColor: meta.c, width: (data.w||120)+'px' }}>
       <${Handle} type="target" position=${Position.Left} isConnectable=${false} />
       <div>${data.short_label}</div>
       <div class="st-type">${meta.label}</div>
       <${Handle} type="source" position=${Position.Right} isConnectable=${false} />
     </div>`;
   }
-  function LaneNode({ data }) {
-    return html`<div class="lane-head">${data.label}</div>`;
-  }
+  function LaneNode({ data }) { return html`<div class="lane-head">${data.label}</div>`; }
   const nodeTypes = { station: StationNode, lane: LaneNode };
 
-  const FIT = { padding: 0.14, includeHiddenNodes: false, minZoom: 0.4, maxZoom: 1.0 };
-  function Fitter({ activeKey }) {
-    const inited = useNodesInitialized();   // true only after custom nodes are measured
-    const rf = useReactFlow();
-    useEffect(() => {
-      if (!inited) return;
-      // fit once nodes are measured, plus a settle-pass — bounds are correct now, so it
-      // frames the whole spine instead of over-zooming on unmeasured (tiny) bounds.
-      const raf = requestAnimationFrame(() => rf.fitView({ ...FIT, duration: 0 }));
-      const t = setTimeout(() => rf.fitView({ ...FIT, duration: 200 }), 180);
-      return () => { cancelAnimationFrame(raf); clearTimeout(t); };
-    }, [inited, activeKey]);
-    return null;
-  }
-
   function Toolbar({ active, setActive, layers }) {
-    const rf = useReactFlow();
     return html`<header>
       <a class="back" href="../">← Atlas</a>
       <span class="brand">Intake Composition Atlas</span>
@@ -239,8 +228,19 @@
       ${layers.map(L => html`<label key=${L.claim} class=${`toggle ${L.claim}${active.has(L.claim)?' on':''}`}
           onClick=${() => { const n=new Set(active); n.has(L.claim)?n.delete(L.claim):n.add(L.claim); setActive(n); }}>
         <span class="swatch"></span>${L.label}</label>`)}
-      <button class="btn" onClick=${() => rf.fitView({ ...FIT, duration: 300 })}>Fit</button>
     </header>`;
+  }
+
+  function Legend({ types }) {
+    return html`<div class="legend">
+      <h5>Node types</h5>
+      ${types.map(t => html`<div key=${t} class="lrow"><span class="nchip" style=${{ background: NODE[t].c+'22', borderColor: NODE[t].c }}></span>${NODE[t].label}</div>`)}
+      <div class="div"></div>
+      <h5>Claim strength</h5>
+      <div class="lrow"><span class="lln doc"></span>Documented</div>
+      <div class="lrow"><span class="lln auth"></span>Authorized</div>
+      <div class="lrow"><span class="lln inf"></span>Inferred</div>
+    </div>`;
   }
 
   function Receipt({ r }) {
@@ -315,7 +315,7 @@
             ${inferredFields.map(n => html`<div key=${n.data.id}
               class=${`idx-item${sel&&sel.kind==='node'&&sel.data.id===n.data.id?' on':''}`}
               onClick=${() => setSel({ kind:'node', data:n.data })}>
-              <span class="chip" style=${{ background: NODE.inferred ? '#c08bff' : '#888' }}></span>${n.data.short_label}</div>`)}` : null}
+              <span class="chip" style=${{ background:'#c08bff' }}></span>${n.data.short_label}</div>`)}` : null}
           <div class="idx-group">External consumers</div>
           <div class="idx-off">none in v1 — by design</div>
         </div>
@@ -327,65 +327,46 @@
     </div>`;
   }
 
-  function App({ graph, pos }) {
+  function App({ graph }) {
     const meta = (graph.cases && graph.cases[0]) || {};
     const [active, setActive] = useState(new Set(['documented']));
     const [sel, setSel] = useState(null);
     const [collapsed, setCollapsed] = useState(false);
+    const [size, setSize] = useState({ w: Math.max(800, (window.innerWidth||1200) - 0), h: 460 });
+    const stageRef = useRef(null);
 
-    // which instrument authorizes each node (for the ⚖ badge instead of a spine node)
+    useEffect(() => {
+      const el = stageRef.current; if (!el) return;
+      const measure = () => { const r = el.getBoundingClientRect(); if (r.width && r.height) setSize({ w: r.width, h: r.height }); };
+      measure();
+      const ro = new ResizeObserver(measure); ro.observe(el);
+      return () => ro.disconnect();
+    }, []);
+
+    const layers = useMemo(() => LAYERS.filter(L =>
+      L.claim === 'documented' || graph.edges.some(e => e.data.claim === L.claim)), [graph]);
+    const legendTypes = useMemo(() => [...new Set(graph.nodes.map(n => n.data.type))].filter(t => NODE[t]), [graph]);
     const authByNode = useMemo(() => {
-      const m = {};
-      graph.edges.forEach(e => { if (e.data.type === 'authorizes') {
-        const tgt = e.data.target; const src = graph.nodes.find(n => n.data.id === e.data.source);
-        if (src) m[tgt] = src.data.short_label;
-      }});
+      const m = {}; graph.edges.forEach(e => { if (e.data.type === 'authorizes') {
+        const src = graph.nodes.find(n => n.data.id === e.data.source); if (src) m[e.data.target] = src.data.short_label; } });
       return m;
     }, [graph]);
 
-    const laneHeaders = useMemo(() => {
-      const byRank = {};
-      graph.nodes.forEach(n => { const p = pos[n.data.id]; if (!p) return;
-        (byRank[n.data.rank] ||= { lane:n.data.lane, xs:[], minY:Infinity });
-        byRank[n.data.rank].xs.push(p.x); byRank[n.data.rank].minY = Math.min(byRank[n.data.rank].minY, p.y); });
-      const ranks = Object.keys(byRank).map(Number).sort((a,b)=>a-b);
-      return ranks.map((rank, i) => ({
-        id: '__lane_'+rank, type:'lane', selectable:false, draggable:false, focusable:false,
-        position: { x: byRank[rank].xs[0], y: byRank[rank].minY - 64 },
-        data: { label: (LANE_LABELS[byRank[rank].lane]||byRank[rank].lane), num: i+1, lane: byRank[rank].lane },
-      }));
-    }, [graph, pos]);
-
-    const visibleEdges = useMemo(() => graph.edges.filter(e => active.has(e.data.claim)), [graph, active]);
-    const visibleNodeIds = useMemo(() => {
-      const s = new Set();
-      visibleEdges.forEach(e => { s.add(e.data.source); s.add(e.data.target); });
-      return s;
-    }, [visibleEdges]);
+    const { pos, laneHeaders, visIds, visEdges } = useMemo(
+      () => editorialLayout(graph, active, size.w, size.h), [graph, active, size]);
 
     const rfNodes = useMemo(() => {
-      const stations = graph.nodes.map(n => {
+      const stations = graph.nodes.filter(n => visIds.has(n.data.id)).map(n => {
         const p = pos[n.data.id] || { x:0, y:0, w:120 };
-        return { id:n.data.id, type:'station', position:{ x:p.x, y:p.y }, draggable:false, selectable:true,
-          // explicit dims -> fitView bounds are correct on first paint (no over-zoom crop)
-          width: p.w, height: 56,
-          hidden: !visibleNodeIds.has(n.data.id),
+        return { id:n.data.id, type:'station', position:{ x:p.x, y:p.y }, draggable:false, selectable:true, width:p.w, height:NODE_H,
           data: { ...n.data, w:p.w, sel: sel&&sel.kind==='node'&&sel.data.id===n.data.id } };
       });
-      const lanes = laneHeaders.map(h => ({ ...h, width: 150, height: 20,
-        hidden: !graph.nodes.some(n => n.data.lane === h.data.lane && visibleNodeIds.has(n.data.id)) }));
+      const lanes = laneHeaders.map(h => ({ id:h.id, type:'lane', position:{ x:h.x-75, y:h.y }, width:150, height:18,
+        selectable:false, draggable:false, focusable:false, data:{ label:(LANE_LABELS[h.lane]||h.lane) } }));
       return stations.concat(lanes);
-    }, [graph, pos, visibleNodeIds, sel, laneHeaders]);
+    }, [graph, pos, laneHeaders, visIds, sel]);
 
-    // bound the pannable area to the graphic + margin — a framed graphic, not a void to drift into
-    const translateExtent = useMemo(() => {
-      let a=Infinity,b=Infinity,c=-Infinity,d=-Infinity;
-      graph.nodes.forEach(n => { const p=pos[n.data.id]; if(!p) return;
-        a=Math.min(a,p.x); b=Math.min(b,p.y-70); c=Math.max(c,p.x+(p.w||120)); d=Math.max(d,p.y+56); });
-      const M=320; return [[a-M,b-M],[c+M,d+M]];
-    }, [graph, pos]);
-
-    const rfEdges = useMemo(() => visibleEdges.map(e => {
+    const rfEdges = useMemo(() => visEdges.map(e => {
       const d = e.data, color = CLAIM[d.claim] || '#888', ann = d.role === 'authorization';
       return {
         id: d.id, source: d.source, target: d.target, type: 'smoothstep',
@@ -398,35 +379,30 @@
           strokeDasharray: d.claim==='documented' ? undefined : (d.claim==='inferred' ? '2 4' : (ann ? '1 4' : '6 5')) },
         data: d,
       };
-    }), [visibleEdges, sel]);
+    }), [visEdges, sel]);
 
-    const vCounts = { nodes: visibleNodeIds.size, edges: visibleEdges.length };
-    const activeKey = [...active].sort().join(',');
-    // hide a layer toggle when the case has zero edges of that claim (e.g. speculative in v1)
-    const layers = useMemo(() => LAYERS.filter(L =>
-      L.claim === 'documented' || graph.edges.some(e => e.data.claim === L.claim)), [graph]);
+    const vCounts = { nodes: visIds.size, edges: visEdges.length };
 
     return html`<div class="page">
       <${Toolbar} active=${active} setActive=${setActive} layers=${layers} />
       <div class="editorial">
         <h1>${meta.headline || 'Composition Graph'}</h1>
-        <div class="dek">${meta.dek || 'Position is the stage in the machine; line style is how strong the claim is. Default view shows the documented path only.'}</div>
+        <div class="dek">${meta.dek || 'The documented path, left to right. Solid = documented, dashed = authorized, dotted = inferred.'}</div>
       </div>
-      <div class="stage">
+      <div class="stage" ref=${stageRef}>
         <${ReactFlow}
           nodes=${rfNodes} edges=${rfEdges} nodeTypes=${nodeTypes}
-          fitView fitViewOptions=${FIT}
-          onInit=${inst => inst.fitView(FIT)}
-          minZoom=${0.3} maxZoom=${2.2} translateExtent=${translateExtent}
+          defaultViewport=${{ x:0, y:0, zoom:1 }} fitView=${false}
+          panOnDrag=${false} zoomOnScroll=${false} zoomOnPinch=${false} zoomOnDoubleClick=${false}
+          panOnScroll=${false} preventScrolling=${false}
           nodesDraggable=${false} nodesConnectable=${false} elementsSelectable=${true}
           proOptions=${{ hideAttribution: true }}
           onNodeClick=${(_, node) => { if (node.type === 'station') setSel({ kind:'node', data: graph.nodes.find(n=>n.data.id===node.id).data }); }}
           onEdgeClick=${(_, edge) => setSel({ kind:'edge', data: edge.data })}
           onPaneClick=${() => setSel(null)}>
-          <${Background} color="#181b21" gap=${28} size=${1} />
-          <${Controls} showInteractive=${false} />
-          <${Fitter} activeKey=${activeKey} />
+          <${Background} color="#15181d" gap=${30} size=${1} />
         </${ReactFlow}>
+        <${Legend} types=${legendTypes} />
       </div>
       <${Drawer} graph=${graph} meta=${meta} sel=${sel} setSel=${setSel} vCounts=${vCounts}
                  collapsed=${collapsed} setCollapsed=${setCollapsed} />
@@ -436,10 +412,7 @@
   (async function boot() {
     try {
       const graph = await fetch('../data/graph.json').then(r => r.json());
-      const pos = await elkLayout(graph);
-      createRoot(document.getElementById('root')).render(
-        html`<${ReactFlowProvider}><${App} graph=${graph} pos=${pos} /></${ReactFlowProvider}>`
-      );
+      createRoot(document.getElementById('root')).render(html`<${App} graph=${graph} />`);
     } catch (err) {
       document.getElementById('root').innerHTML =
         '<div class="boot">Renderer failed to load: ' + (err && err.message ? err.message : err) +

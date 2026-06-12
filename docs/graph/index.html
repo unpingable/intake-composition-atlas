@@ -49,18 +49,6 @@
     .react-flow__attribution { display: none; }
     .react-flow__pane { cursor: default; }
 
-    /* on-figure legend — findable, top-right of the graphic */
-    .legend { position: absolute; top: 12px; right: 12px; z-index: 6; background: rgba(12,14,18,0.86);
-      backdrop-filter: blur(6px); border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; font-size: 11px; }
-    .legend h5 { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.1em; color: #555b63; margin: 0 0 7px; }
-    .legend .lrow { display: flex; align-items: center; gap: 8px; margin: 4px 0; color: #9aa0a8; white-space: nowrap; }
-    .legend .nchip { width: 10px; height: 10px; border-radius: 3px; border: 1px solid; flex-shrink: 0; }
-    .legend .lln { width: 22px; height: 0; flex-shrink: 0; }
-    .legend .lln.doc { border-top: 2.5px solid var(--documented); }
-    .legend .lln.auth { border-top: 2.5px dashed var(--authorized); }
-    .legend .lln.inf { border-top: 2.5px dotted var(--inferred); }
-    .legend .div { height: 1px; background: var(--line); margin: 8px 0 6px; }
-
     .station { border: 1.5px solid #888; border-radius: 9px; background: #0e1116; padding: 9px 13px;
       text-align: center; color: #eef1f5; font-size: 13.5px; font-weight: 600; line-height: 1.2; cursor: pointer;
       box-shadow: 0 1px 0 rgba(0,0,0,0.4); transition: box-shadow .15s, background .15s; position: relative; }
@@ -86,6 +74,9 @@
     .col-sel { flex: 1; min-width: 0; border-left: 1px solid var(--line); padding-left: 24px; }
     .shows-text { font-size: 12.5px; color: #b6bcc4; line-height: 1.6; margin-bottom: 11px; }
     .legend-line { font-size: 11px; color: #707983; line-height: 1.7; }
+    .type-key { display: flex; flex-wrap: wrap; gap: 5px 13px; margin-top: 11px; }
+    .type-key .tk { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: #9aa0a8; }
+    .type-key .tk .c { width: 10px; height: 10px; border-radius: 3px; border: 1px solid; flex-shrink: 0; }
     .ln { display: inline-block; width: 20px; height: 0; vertical-align: middle; margin-right: 4px; }
     .ln.doc { border-top: 2.5px solid var(--documented); }
     .ln.auth { border-top: 2.5px dashed var(--authorized); }
@@ -128,7 +119,7 @@
     .boot { display: grid; place-items: center; height: 100%; color: #6b7280; font-size: 13px; text-align: center; }
     .boot a { color: var(--documented); }
     @media (max-width: 1000px) { .col-fields { display: none; } }
-    @media (max-width: 760px) { .col-shows { flex-basis: 220px; } .sel-grid { flex-direction: column; } .sel-meta { flex: none; } .legend { display: none; } }
+    @media (max-width: 760px) { .col-shows { flex-basis: 220px; } .sel-grid { flex-direction: column; } .sel-meta { flex: none; } }
   </style>
 </head>
 <body>
@@ -231,18 +222,6 @@
     </header>`;
   }
 
-  function Legend({ types }) {
-    return html`<div class="legend">
-      <h5>Node types</h5>
-      ${types.map(t => html`<div key=${t} class="lrow"><span class="nchip" style=${{ background: NODE[t].c+'22', borderColor: NODE[t].c }}></span>${NODE[t].label}</div>`)}
-      <div class="div"></div>
-      <h5>Claim strength</h5>
-      <div class="lrow"><span class="lln doc"></span>Documented</div>
-      <div class="lrow"><span class="lln auth"></span>Authorized</div>
-      <div class="lrow"><span class="lln inf"></span>Inferred</div>
-    </div>`;
-  }
-
   function Receipt({ r }) {
     return html`<div class="receipt">
       <div class="kind">${r.kind||'receipt'}</div>
@@ -290,6 +269,7 @@
   function Drawer({ graph, meta, sel, setSel, vCounts, collapsed, setCollapsed }) {
     const collected = graph.nodes.filter(n => n.data.type === 'field_class' && n.data.lane === 'data');
     const inferredFields = graph.nodes.filter(n => n.data.type === 'field_class' && n.data.lane === 'inference');
+    const types = [...new Set(graph.nodes.map(n => n.data.type))].filter(t => NODE[t]);
     return html`<div class=${`drawer${collapsed?' collapsed':''}`}>
       <div class="drawer-bar" onClick=${() => setCollapsed(!collapsed)}>
         <span class="grip"></span><span class="title">${sel ? 'Selection' : 'What this map shows'}</span>
@@ -303,6 +283,9 @@
           <div class="legend-line">
             <span class="ln doc"></span> documented &nbsp; <span class="ln auth"></span> authorized &nbsp; <span class="ln inf"></span> inferred<br/>
             Read left → right. Click any box or line for its receipts.
+          </div>
+          <div class="type-key">
+            ${types.map(t => html`<span key=${t} class="tk"><span class="c" style=${{ background: NODE[t].c+'22', borderColor: NODE[t].c }}></span>${NODE[t].label}</span>`)}
           </div>
         </div>
         <div class="col col-fields">
@@ -345,7 +328,6 @@
 
     const layers = useMemo(() => LAYERS.filter(L =>
       L.claim === 'documented' || graph.edges.some(e => e.data.claim === L.claim)), [graph]);
-    const legendTypes = useMemo(() => [...new Set(graph.nodes.map(n => n.data.type))].filter(t => NODE[t]), [graph]);
     const authByNode = useMemo(() => {
       const m = {}; graph.edges.forEach(e => { if (e.data.type === 'authorizes') {
         const src = graph.nodes.find(n => n.data.id === e.data.source); if (src) m[e.data.target] = src.data.short_label; } });
@@ -402,7 +384,6 @@
           onPaneClick=${() => setSel(null)}>
           <${Background} color="#15181d" gap=${30} size=${1} />
         </${ReactFlow}>
-        <${Legend} types=${legendTypes} />
       </div>
       <${Drawer} graph=${graph} meta=${meta} sel=${sel} setSel=${setSel} vCounts=${vCounts}
                  collapsed=${collapsed} setCollapsed=${setCollapsed} />

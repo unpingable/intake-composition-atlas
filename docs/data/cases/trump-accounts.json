@@ -159,7 +159,7 @@
             "id": "r-ta-form",
             "kind": "omb_icr",
             "url": "https://www.irs.gov/instructions/i4547",
-            "archived": "",
+            "archived": "http://web.archive.org/web/20260612215958/https://www.irs.gov/instructions/i4547",
             "retrieved": "2026-06-12",
             "basis": "Instructions for Form 4547 (Rev. Dec 2025), \"Trump Account Election(s)\", OMB control number 1545-2336. Collects: parent/legal-guardian name, address, and SSN/ITIN (Part I); eligible child's name, relationship, address, and SSN (Part II); and elections to open the account and request the $1,000 pilot contribution (Parts III\u2013IV). Authority: \"Sections 530A and 6109 and their regulations require you to provide this information.\"\n"
           },
@@ -167,7 +167,7 @@
             "id": "r-ta-icr",
             "kind": "omb_icr",
             "url": "https://www.federalregister.gov/documents/2026/04/28/2026-08228/agency-information-collection-activities-comment-request-on-ira-and-trump-account-contribution",
-            "archived": "",
+            "archived": "http://web.archive.org/web/20260429114243/https://www.federalregister.gov/documents/2026/04/28/2026-08228/agency-information-collection-activities-comment-request-on-ira-and-trump-account-contribution",
             "retrieved": "2026-06-12",
             "basis": "IRS Paperwork Reduction Act notice, \"Agency Information Collection Activities; Comment Request on IRA and Trump Account Contribution Information\" (FR 2026-08228, Apr 28 2026). Covers the information collection for Trump Account contribution information under OMB control number 1545-2336.\n"
           }
@@ -190,7 +190,7 @@
             "id": "r-ta-form",
             "kind": "omb_icr",
             "url": "https://www.irs.gov/instructions/i4547",
-            "archived": "",
+            "archived": "http://web.archive.org/web/20260612215958/https://www.irs.gov/instructions/i4547",
             "retrieved": "2026-06-12",
             "basis": "Instructions for Form 4547 (Rev. Dec 2025), \"Trump Account Election(s)\", OMB control number 1545-2336. Collects: parent/legal-guardian name, address, and SSN/ITIN (Part I); eligible child's name, relationship, address, and SSN (Part II); and elections to open the account and request the $1,000 pilot contribution (Parts III\u2013IV). Authority: \"Sections 530A and 6109 and their regulations require you to provide this information.\"\n"
           }
@@ -213,7 +213,7 @@
             "id": "r-ta-form",
             "kind": "omb_icr",
             "url": "https://www.irs.gov/instructions/i4547",
-            "archived": "",
+            "archived": "http://web.archive.org/web/20260612215958/https://www.irs.gov/instructions/i4547",
             "retrieved": "2026-06-12",
             "basis": "Instructions for Form 4547 (Rev. Dec 2025), \"Trump Account Election(s)\", OMB control number 1545-2336. Collects: parent/legal-guardian name, address, and SSN/ITIN (Part I); eligible child's name, relationship, address, and SSN (Part II); and elections to open the account and request the $1,000 pilot contribution (Parts III\u2013IV). Authority: \"Sections 530A and 6109 and their regulations require you to provide this information.\"\n"
           }
@@ -236,7 +236,7 @@
             "id": "r-ta-form",
             "kind": "omb_icr",
             "url": "https://www.irs.gov/instructions/i4547",
-            "archived": "",
+            "archived": "http://web.archive.org/web/20260612215958/https://www.irs.gov/instructions/i4547",
             "retrieved": "2026-06-12",
             "basis": "Instructions for Form 4547 (Rev. Dec 2025), \"Trump Account Election(s)\", OMB control number 1545-2336. Collects: parent/legal-guardian name, address, and SSN/ITIN (Part I); eligible child's name, relationship, address, and SSN (Part II); and elections to open the account and request the $1,000 pilot contribution (Parts III\u2013IV). Authority: \"Sections 530A and 6109 and their regulations require you to provide this information.\"\n"
           },
@@ -244,7 +244,7 @@
             "id": "r-ta-prop-reg",
             "kind": "agency_statement",
             "url": "https://www.irs.gov/newsroom/treasury-irs-issue-proposed-regulations-for-trump-accounts-contribution-pilot-program-treasury-department-to-deposit-1000-into-the-account-of-each-eligible-child",
-            "archived": "",
+            "archived": "http://web.archive.org/web/20260612220104/https://www.irs.gov/newsroom/treasury-irs-issue-proposed-regulations-for-trump-accounts-contribution-pilot-program-treasury-department-to-deposit-1000-into-the-account-of-each-eligible-child",
             "retrieved": "2026-06-12",
             "basis": "IRS newsroom statement on the proposed pilot-program regulations: \"Treasury will make one-time $1,000 pilot program contributions to the Trump Accounts of eligible children for whom elections have been made.\" Eligibility: child \"must be born in calendar year 2025, 2026, 2027, or 2028, be a United States citizen, [and] have been issued a Social Security Number.\" The statement does NOT describe how eligibility is verified or whether records are shared/matched between IRS, Treasury, and SSA \u2014 recorded here as absence, not concealment.\n"
           }
@@ -313,7 +313,7 @@
             "id": "r-ta-sorn",
             "kind": "sorn",
             "url": "https://www.federalregister.gov/documents/2026/04/17/2026-07514/privacy-act-of-1974-system-of-records",
-            "archived": "",
+            "archived": "http://web.archive.org/web/20260424181844/https://www.federalregister.gov/documents/2026/04/17/2026-07514/privacy-act-of-1974-system-of-records",
             "retrieved": "2026-06-12",
             "basis": "Privacy Act SORN, \"Department of the Treasury, .031 \u2014 Trump Accounts Program (TAP) System of Records\" (FR 2026-07514, Apr 17 2026). The system \"supports the Treasury's administration, oversight and compliance activities associated with Trump accounts,\" a type of traditional IRA under 26 U.S.C. 530A; records \"enable Treasury to administer and oversee program operations, ensure compliance with applicable statutory requirements, and carry out the objectives for Trump accounts.\"\n"
           },
@@ -344,7 +344,7 @@
             "id": "r-ta-statute",
             "kind": "statute",
             "url": "https://www.govinfo.gov/app/details/PLAW-119publ21",
-            "archived": "",
+            "archived": "http://web.archive.org/web/20260612220151/https://www.govinfo.gov/app/details/PLAW-119publ21",
             "retrieved": "2026-06-12",
             "basis": "Section 70204 of Pub. L. 119-21 (One, Big, Beautiful Bill Act, 139 Stat. 72, July 4 2025) enacts IRC \u00a7 6434 and \u00a7 530A. \u00a7 530A establishes \"Trump accounts\" as a type of traditional IRA for an eligible child; \u00a7 6434 directs the Secretary of the Treasury to make a one-time $1,000 pilot-program contribution to the Trump account of each eligible child (a U.S. citizen born 2025\u20132028 with an SSN) for whom an election is made. AUTHORIZES the disbursement; does not, by itself, witness any IRS\u2192Treasury data flow.\n"
           }
@@ -367,7 +367,7 @@
             "id": "r-ta-statute",
             "kind": "statute",
             "url": "https://www.govinfo.gov/app/details/PLAW-119publ21",
-            "archived": "",
+            "archived": "http://web.archive.org/web/20260612220151/https://www.govinfo.gov/app/details/PLAW-119publ21",
             "retrieved": "2026-06-12",
             "basis": "Section 70204 of Pub. L. 119-21 (One, Big, Beautiful Bill Act, 139 Stat. 72, July 4 2025) enacts IRC \u00a7 6434 and \u00a7 530A. \u00a7 530A establishes \"Trump accounts\" as a type of traditional IRA for an eligible child; \u00a7 6434 directs the Secretary of the Treasury to make a one-time $1,000 pilot-program contribution to the Trump account of each eligible child (a U.S. citizen born 2025\u20132028 with an SSN) for whom an election is made. AUTHORIZES the disbursement; does not, by itself, witness any IRS\u2192Treasury data flow.\n"
           }
@@ -391,7 +391,7 @@
             "id": "r-ta-statute",
             "kind": "statute",
             "url": "https://www.govinfo.gov/app/details/PLAW-119publ21",
-            "archived": "",
+            "archived": "http://web.archive.org/web/20260612220151/https://www.govinfo.gov/app/details/PLAW-119publ21",
             "retrieved": "2026-06-12",
             "basis": "Section 70204 of Pub. L. 119-21 (One, Big, Beautiful Bill Act, 139 Stat. 72, July 4 2025) enacts IRC \u00a7 6434 and \u00a7 530A. \u00a7 530A establishes \"Trump accounts\" as a type of traditional IRA for an eligible child; \u00a7 6434 directs the Secretary of the Treasury to make a one-time $1,000 pilot-program contribution to the Trump account of each eligible child (a U.S. citizen born 2025\u20132028 with an SSN) for whom an election is made. AUTHORIZES the disbursement; does not, by itself, witness any IRS\u2192Treasury data flow.\n"
           }
@@ -420,7 +420,7 @@
             "id": "r-ta-prop-reg",
             "kind": "agency_statement",
             "url": "https://www.irs.gov/newsroom/treasury-irs-issue-proposed-regulations-for-trump-accounts-contribution-pilot-program-treasury-department-to-deposit-1000-into-the-account-of-each-eligible-child",
-            "archived": "",
+            "archived": "http://web.archive.org/web/20260612220104/https://www.irs.gov/newsroom/treasury-irs-issue-proposed-regulations-for-trump-accounts-contribution-pilot-program-treasury-department-to-deposit-1000-into-the-account-of-each-eligible-child",
             "retrieved": "2026-06-12",
             "basis": "IRS newsroom statement on the proposed pilot-program regulations: \"Treasury will make one-time $1,000 pilot program contributions to the Trump Accounts of eligible children for whom elections have been made.\" Eligibility: child \"must be born in calendar year 2025, 2026, 2027, or 2028, be a United States citizen, [and] have been issued a Social Security Number.\" The statement does NOT describe how eligibility is verified or whether records are shared/matched between IRS, Treasury, and SSA \u2014 recorded here as absence, not concealment.\n"
           }
@@ -447,7 +447,7 @@
             "id": "r-ta-sorn",
             "kind": "sorn",
             "url": "https://www.federalregister.gov/documents/2026/04/17/2026-07514/privacy-act-of-1974-system-of-records",
-            "archived": "",
+            "archived": "http://web.archive.org/web/20260424181844/https://www.federalregister.gov/documents/2026/04/17/2026-07514/privacy-act-of-1974-system-of-records",
             "retrieved": "2026-06-12",
             "basis": "Privacy Act SORN, \"Department of the Treasury, .031 \u2014 Trump Accounts Program (TAP) System of Records\" (FR 2026-07514, Apr 17 2026). The system \"supports the Treasury's administration, oversight and compliance activities associated with Trump accounts,\" a type of traditional IRA under 26 U.S.C. 530A; records \"enable Treasury to administer and oversee program operations, ensure compliance with applicable statutory requirements, and carry out the objectives for Trump accounts.\"\n"
           }
@@ -474,7 +474,7 @@
             "id": "r-ta-form",
             "kind": "omb_icr",
             "url": "https://www.irs.gov/instructions/i4547",
-            "archived": "",
+            "archived": "http://web.archive.org/web/20260612215958/https://www.irs.gov/instructions/i4547",
             "retrieved": "2026-06-12",
             "basis": "Instructions for Form 4547 (Rev. Dec 2025), \"Trump Account Election(s)\", OMB control number 1545-2336. Collects: parent/legal-guardian name, address, and SSN/ITIN (Part I); eligible child's name, relationship, address, and SSN (Part II); and elections to open the account and request the $1,000 pilot contribution (Parts III\u2013IV). Authority: \"Sections 530A and 6109 and their regulations require you to provide this information.\"\n"
           }

@@ -1,7 +1,7 @@
 id: r-ta-form
 kind: omb_icr
 url: https://www.irs.gov/instructions/i4547
-archived: ""   # TODO(snapshot.py, Phase 5): archive.org snapshot not yet captured
+archived: "http://web.archive.org/web/20260612215958/https://www.irs.gov/instructions/i4547"
 retrieved: 2026-06-12
 basis: >
   Instructions for Form 4547 (Rev. Dec 2025), "Trump Account Election(s)", OMB control

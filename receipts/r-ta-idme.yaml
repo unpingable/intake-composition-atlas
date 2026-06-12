@@ -1,7 +1,7 @@
 id: r-ta-idme
 kind: agency_statement
 url: https://www.irs.gov/trumpaccounts
-archived: ""   # TODO(snapshot.py, Phase 5)
+archived: ""   # archive.org save attempted, no snapshot returned yet (retry)
 retrieved: 2026-06-12
 basis: >
   IRS Trump Accounts guidance: to establish an initial Trump account, the taxpayer signs in to

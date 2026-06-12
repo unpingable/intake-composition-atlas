@@ -1,7 +1,7 @@
 id: r-ta-treasury-pr
 kind: agency_statement
 url: https://home.treasury.gov/news/press-releases/sb0508
-archived: ""   # TODO(snapshot.py, Phase 5)
+archived: ""   # archive.org save attempted, no snapshot returned yet (retry)
 retrieved: 2026-06-12
 basis: >
   Treasury press release "Treasury Announces the Launch of the Trump Accounts App and Next

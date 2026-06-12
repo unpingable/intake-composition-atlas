@@ -1,7 +1,7 @@
 id: r-ta-statute
 kind: statute
 url: https://www.govinfo.gov/app/details/PLAW-119publ21
-archived: ""   # TODO(snapshot.py, Phase 5)
+archived: "http://web.archive.org/web/20260612220151/https://www.govinfo.gov/app/details/PLAW-119publ21"
 retrieved: 2026-06-12
 basis: >
   Section 70204 of Pub. L. 119-21 (One, Big, Beautiful Bill Act, 139 Stat. 72, July 4 2025)

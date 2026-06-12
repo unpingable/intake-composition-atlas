@@ -1,7 +1,7 @@
 id: r-ta-sorn
 kind: sorn
 url: https://www.federalregister.gov/documents/2026/04/17/2026-07514/privacy-act-of-1974-system-of-records
-archived: ""   # TODO(snapshot.py, Phase 5)
+archived: "http://web.archive.org/web/20260424181844/https://www.federalregister.gov/documents/2026/04/17/2026-07514/privacy-act-of-1974-system-of-records"
 retrieved: 2026-06-12
 basis: >
   Privacy Act SORN, "Department of the Treasury, .031 — Trump Accounts Program (TAP) System

@@ -17,7 +17,7 @@ you cannot see.
 
 ## Live site
 
-_(GitHub Pages — published from `docs/`.)_
+**[unpingable.github.io/intake-composition-atlas](https://unpingable.github.io/intake-composition-atlas/)**
 
 ## Claim types
 

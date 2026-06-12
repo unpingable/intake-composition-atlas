@@ -1,5 +1,5 @@
 id: r-ta-treasury-pr
-kind: press_or_agency_statement
+kind: agency_statement
 url: https://home.treasury.gov/news/press-releases/sb0508
 archived: ""   # TODO(snapshot.py, Phase 5)
 retrieved: 2026-06-12

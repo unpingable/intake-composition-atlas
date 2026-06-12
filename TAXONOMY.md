@@ -38,7 +38,8 @@ receipts each requires are in [METHODOLOGY.md](METHODOLOGY.md). One per edge.
 ## Receipt kinds
 
 `cma`, `sorn`, `pia`, `omb_icr`, `contract_award`, `fedramp`, `observed_artifact`,
-`press_or_agency_statement` (documented-eligible); `eo`, `statute` (authorize a
+`agency_statement` (documented-eligible — first-party custodian disclosure only, not
+third-party journalism); `eo`, `statute` (authorize a
 flow, do not witness it — see `signed_is_not_witnessed`).
 
 ## Case status

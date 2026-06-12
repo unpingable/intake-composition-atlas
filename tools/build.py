@@ -59,8 +59,8 @@ TYPE_LANE = {
 # Edge "role" separates DAG plumbing from annotations so they don't compete for the
 # same visual grammar. claim (documented/authorized/inferred) is orthogonal.
 EDGE_ROLE = {
-    "collects": "flow", "feeds": "flow", "operates": "flow", "shares_with": "flow",
-    "matches_against": "flow", "consumed_by": "flow",
+    "collects": "flow", "hosts": "flow", "feeds": "flow", "operates": "flow",
+    "shares_with": "flow", "matches_against": "flow", "consumed_by": "flow",
     "authorizes": "authorization", "enables_inference": "inference",
 }
 

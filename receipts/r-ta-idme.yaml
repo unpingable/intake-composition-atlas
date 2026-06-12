@@ -1,5 +1,5 @@
 id: r-ta-idme
-kind: press_or_agency_statement
+kind: agency_statement
 url: https://www.irs.gov/trumpaccounts
 archived: ""   # TODO(snapshot.py, Phase 5)
 retrieved: 2026-06-12

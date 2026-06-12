@@ -1,5 +1,5 @@
 id: r-ta-prop-reg
-kind: press_or_agency_statement
+kind: agency_statement
 url: https://www.irs.gov/newsroom/treasury-irs-issue-proposed-regulations-for-trump-accounts-contribution-pilot-program-treasury-department-to-deposit-1000-into-the-account-of-each-eligible-child
 archived: ""   # TODO(snapshot.py, Phase 5)
 retrieved: 2026-06-12

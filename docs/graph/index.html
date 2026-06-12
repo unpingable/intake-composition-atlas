@@ -156,14 +156,17 @@
     inferred:   'Composition makes this derivable — not disclosed, not authorized as such.',
     speculative:'Plausible under incentive analysis only.',
   };
-  const EDGE_VERB = { collects:'collects', feeds:'sends intake into', operates:'runs', shares_with:'discloses records to',
-    matches_against:'cross-matches records with', consumed_by:'is used to drive', authorizes:'permits', enables_inference:'composes into' };
-  // reader-facing layer controls (internal claim class in parens stays in the drawer)
+  const EDGE_VERB = { collects:'collects', hosts:'presents', feeds:'sends intake into', operates:'runs',
+    shares_with:'discloses records to', matches_against:'cross-matches records with',
+    consumed_by:'is used to drive', authorizes:'permits', enables_inference:'composes into' };
+  // reader-facing layer controls. Note: these select by CLAIM STRENGTH, not lane — so the
+  // weakest claim is labeled plainly "Speculative" (not a lane name like "External power",
+  // which would conflate the two axes the whole visual grammar exists to separate).
   const LAYERS = [
     { claim:'documented',  label:'Documented path' },
     { claim:'authorized',  label:'Legal authority' },
     { claim:'inferred',    label:'Possible inferences' },
-    { claim:'speculative', label:'External power' },
+    { claim:'speculative', label:'Speculative' },
   ];
   // editorial lane names — the map regions, in plain language
   const LANE_LABELS = { authority:'Legal authority', intake:'Where people enter', collection:'What the form asks',
@@ -226,14 +229,14 @@
     return null;
   }
 
-  function Toolbar({ active, setActive }) {
+  function Toolbar({ active, setActive, layers }) {
     const rf = useReactFlow();
     return html`<header>
       <a class="back" href="../">← Atlas</a>
       <span class="brand">Intake Composition Atlas</span>
       <span class="spacer"></span>
       <span class="lbl">Show</span>
-      ${LAYERS.map(L => html`<label key=${L.claim} class=${`toggle ${L.claim}${active.has(L.claim)?' on':''}`}
+      ${layers.map(L => html`<label key=${L.claim} class=${`toggle ${L.claim}${active.has(L.claim)?' on':''}`}
           onClick=${() => { const n=new Set(active); n.has(L.claim)?n.delete(L.claim):n.add(L.claim); setActive(n); }}>
         <span class="swatch"></span>${L.label}</label>`)}
       <button class="btn" onClick=${() => rf.fitView({ ...FIT, duration: 300 })}>Fit</button>
@@ -399,9 +402,12 @@
 
     const vCounts = { nodes: visibleNodeIds.size, edges: visibleEdges.length };
     const activeKey = [...active].sort().join(',');
+    // hide a layer toggle when the case has zero edges of that claim (e.g. speculative in v1)
+    const layers = useMemo(() => LAYERS.filter(L =>
+      L.claim === 'documented' || graph.edges.some(e => e.data.claim === L.claim)), [graph]);
 
     return html`<div class="page">
-      <${Toolbar} active=${active} setActive=${setActive} />
+      <${Toolbar} active=${active} setActive=${setActive} layers=${layers} />
       <div class="editorial">
         <h1>${meta.headline || 'Composition Graph'}</h1>
         <div class="dek">${meta.dek || 'Position is the stage in the machine; line style is how strong the claim is. Default view shows the documented path only.'}</div>
@@ -411,7 +417,7 @@
           nodes=${rfNodes} edges=${rfEdges} nodeTypes=${nodeTypes}
           fitView fitViewOptions=${FIT}
           onInit=${inst => inst.fitView(FIT)}
-          minZoom=${0.4} maxZoom=${1.0} translateExtent=${translateExtent}
+          minZoom=${0.3} maxZoom=${2.2} translateExtent=${translateExtent}
           nodesDraggable=${false} nodesConnectable=${false} elementsSelectable=${true}
           proOptions=${{ hideAttribution: true }}
           onNodeClick=${(_, node) => { if (node.type === 'station') setSel({ kind:'node', data: graph.nodes.find(n=>n.data.id===node.id).data }); }}

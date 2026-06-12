@@ -21,7 +21,8 @@ claim_types:
       - contract_award
       - fedramp
       - observed_artifact
-      - press_or_agency_statement
+      - agency_statement   # FIRST-PARTY disclosure by the record custodian (agency guidance,
+                           # press release). Third-party journalism is leads-only, never this.
       - statute   # ONLY as to the statute's own text, never as basis for a flow
   authorized:   # a legal instrument permits this flow; no evidence it occurs
     eligible_receipt_kinds: [eo, statute, sorn]   # routine-use clause, EO, enabling statute
@@ -63,6 +64,7 @@ node_types:
 # ---------------------------------------------------------------------------
 edge_types:
   collects:          # portal/form  -> field_class
+  hosts:             # portal       -> form            (the portal presents/serves the form)
   authorizes:        # instrument   -> portal | edge   (the instrument permits a thing)
   feeds:             # portal/form  -> system_of_record
   operates:          # operator     -> portal | system_of_record
@@ -84,6 +86,10 @@ contestation_required_on: [shares_with, matches_against, consumed_by]
 # claim: documented                  # one of claim_types
 # receipts: [r-0017, r-0018]         # REQUIRED; >=1; each must resolve to a receipt id
 # derivation: []                     # REQUIRED non-empty iff claim == inferred; parent edge ids
+#                                    # within-case today. CROSS-CASE composition is the atlas
+#                                    # thesis: when an inferred edge derives from a parent in
+#                                    # another case, qualify the reference as `case_id:edge_id`
+#                                    # (reserved syntax; linter resolution is a Phase-3 add).
 # contestation:                      # REQUIRED on contestation_required_on edge types
 #   notice: "Privacy Act SORN routine use (k)(3)"   # how would a subject learn of this?
 #   appeal: none_identified          # what process targets the composed result?

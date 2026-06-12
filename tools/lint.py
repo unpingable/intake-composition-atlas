@@ -36,7 +36,7 @@ NODE_TYPES = {
     "agency", "operator", "decision_surface", "external_consumer",
 }
 EDGE_TYPES = {
-    "collects", "authorizes", "feeds", "operates", "shares_with",
+    "collects", "hosts", "authorizes", "feeds", "operates", "shares_with",
     "matches_against", "enables_inference", "consumed_by",
 }
 CLAIM_TYPES = {"documented", "authorized", "inferred", "speculative"}
@@ -44,7 +44,7 @@ CLAIM_TYPES = {"documented", "authorized", "inferred", "speculative"}
 # its own text, never that a flow occurs — so it is NOT in this set.
 DOCUMENTED_KINDS = {
     "cma", "sorn", "pia", "omb_icr", "contract_award", "fedramp",
-    "observed_artifact", "press_or_agency_statement",
+    "observed_artifact", "agency_statement",
 }
 # An edge basis drawn ONLY from these kinds asserts permission, not occurrence.
 AUTHORIZED_ONLY_KINDS = {"eo", "statute"}
@@ -238,6 +238,17 @@ def lint(root, today, report):
         if spec_count > SPECULATIVE_MAX_PER_CASE:
             report.error("SPECULATIVE_OVER_CAP", loc0,
                          f"{spec_count} speculative edges (max {SPECULATIVE_MAX_PER_CASE} per case)")
+
+        # RULE (warning): a node touched by no edge is dead data — it can never render and
+        # carries no claim. external_consumer is exempt: v1 ships those node(s) edgeless by
+        # design so the empty region of the graph speaks.
+        touched = set()
+        for e in edges:
+            touched.add(e.get("from")); touched.add(e.get("to"))
+        for n in nodes:
+            if n.get("id") not in touched and n.get("type") != "external_consumer":
+                report.warn("NODE_ORPHAN", f"{loc0}:{n.get('id')}",
+                            f"node {n.get('id')!r} ({n.get('type')}) is touched by no edge")
 
     return report
 

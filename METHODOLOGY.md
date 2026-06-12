@@ -19,10 +19,21 @@ does not ship.
 
 | Claim type | Asserts | Required receipt |
 |---|---|---|
-| `documented` | This flow/collection **exists** (someone disclosed it) | A receipt of a documented-eligible kind: `cma`, `sorn`, `pia`, `omb_icr`, `contract_award`, `fedramp`, `observed_artifact`, `press_or_agency_statement` |
+| `documented` | This flow/collection **exists** (someone disclosed it) | A receipt of a documented-eligible kind: `cma`, `sorn`, `pia`, `omb_icr`, `contract_award`, `fedramp`, `observed_artifact`, `agency_statement` |
 | `authorized` | A legal instrument **permits** this flow; no evidence it occurs | `eo`, `statute`, or a SORN routine-use clause — citation to the authorizing text |
 | `inferred` | Composition makes this **derivable**; not authorized as such, not observed | A `derivation`: the parent edge IDs whose composition yields it |
 | `speculative` | Plausible under incentive analysis only | Marked; excluded from the default view; capped at 2 per case |
+
+### Why `agency_statement` is documented-eligible (and journalism is not)
+
+`agency_statement` is the softest documented-eligible kind, so its boundary is drawn
+deliberately. It admits **first-party disclosure by the record custodian** — an agency's own
+guidance page, a department press release — which is a statement about the custodian's own
+operations, roughly a statement against interest, and a defensible witness that a flow exists.
+It does **not** admit third-party journalism: a newspaper reporting that a flow occurs is a
+relay, not a witness (cf. *indexed is not read*), and is leads-only — chase its citations to a
+primary record. The kind is named `agency_statement`, not `press_or_agency_statement`, precisely
+so a future edit cannot quietly let a WSJ article stand as a `documented` basis.
 
 ## `signed_is_not_witnessed`
 

@@ -35,17 +35,6 @@
     },
     {
       "data": {
-        "id": "agency-irs",
-        "type": "agency",
-        "label": "Internal Revenue Service",
-        "short_label": "IRS",
-        "lane": "custody",
-        "rank": 4,
-        "case": "trump-accounts"
-      }
-    },
-    {
-      "data": {
         "id": "agency-treasury",
         "type": "agency",
         "label": "U.S. Department of the Treasury",
@@ -253,7 +242,7 @@
           },
           {
             "id": "r-ta-prop-reg",
-            "kind": "press_or_agency_statement",
+            "kind": "agency_statement",
             "url": "https://www.irs.gov/newsroom/treasury-irs-issue-proposed-regulations-for-trump-accounts-contribution-pilot-program-treasury-department-to-deposit-1000-into-the-account-of-each-eligible-child",
             "archived": "",
             "retrieved": "2026-06-12",
@@ -276,11 +265,34 @@
         "receipts": [
           {
             "id": "r-ta-idme",
-            "kind": "press_or_agency_statement",
+            "kind": "agency_statement",
             "url": "https://www.irs.gov/trumpaccounts",
             "archived": "",
             "retrieved": "2026-06-12",
             "basis": "IRS Trump Accounts guidance: to establish an initial Trump account, the taxpayer signs in to their IRS Online Account \u2014 which uses ID.me identity verification \u2014 and submits Form 4547. ID.me is therefore the identity-proofing operator on the intake path. (Observed via agency guidance rather than direct page inspection: form.trumpaccounts.gov 301-redirects to irs.gov/trumpaccounts and the account flow is app/SPA-based.)\n"
+          }
+        ],
+        "derivation": []
+      },
+      "classes": "documented flow"
+    },
+    {
+      "data": {
+        "id": "e-portal-hosts-form",
+        "source": "portal-trump-accounts",
+        "target": "form-4547",
+        "type": "hosts",
+        "claim": "documented",
+        "case": "trump-accounts",
+        "role": "flow",
+        "receipts": [
+          {
+            "id": "r-ta-treasury-pr",
+            "kind": "agency_statement",
+            "url": "https://home.treasury.gov/news/press-releases/sb0508",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Treasury press release \"Treasury Announces the Launch of the Trump Accounts App and Next Steps for Trump Accounts\" (sb0508). Families open accounts by filing IRS Form 4547 on TrumpAccounts.gov; Treasury operates the Trump Accounts app; activation emails come only from no-reply@TrumpAccounts.Treasury.gov; Treasury deposits the one-time $1,000 contribution into eligible children's accounts beginning July 4, 2026.\n"
           }
         ],
         "derivation": []
@@ -307,7 +319,7 @@
           },
           {
             "id": "r-ta-treasury-pr",
-            "kind": "press_or_agency_statement",
+            "kind": "agency_statement",
             "url": "https://home.treasury.gov/news/press-releases/sb0508",
             "archived": "",
             "retrieved": "2026-06-12",
@@ -406,7 +418,7 @@
         "receipts": [
           {
             "id": "r-ta-prop-reg",
-            "kind": "press_or_agency_statement",
+            "kind": "agency_statement",
             "url": "https://www.irs.gov/newsroom/treasury-irs-issue-proposed-regulations-for-trump-accounts-contribution-pilot-program-treasury-department-to-deposit-1000-into-the-account-of-each-eligible-child",
             "archived": "",
             "retrieved": "2026-06-12",

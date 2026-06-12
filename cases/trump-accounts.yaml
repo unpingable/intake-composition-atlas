@@ -26,10 +26,9 @@ nodes:
   # Optional cartographic fields: short_label (canvas recognition label; full label lives in the
   # side panel) and lane (semantic stage; overrides the type->lane default in build.py). Position
   # encodes WHERE a claim sits in the machine; edge styling encodes HOW strong the claim is.
-  - { id: portal-trump-accounts, type: portal, label: "TrumpAccounts.gov", short_label: "TrumpAccounts.gov", agency: agency-irs }
+  - { id: portal-trump-accounts, type: portal, label: "TrumpAccounts.gov", short_label: "TrumpAccounts.gov" }
   - { id: form-4547, type: form, label: "Form 4547 — Trump Account Election(s) (OMB 1545-2336)", short_label: "Form 4547" }
   - { id: instrument-6434, type: instrument, label: "IRC § 6434 / § 530A (§ 70204, P.L. 119-21)", short_label: "IRC § 6434 / § 530A" }
-  - { id: agency-irs, type: agency, label: "Internal Revenue Service", short_label: "IRS" }
   - { id: agency-treasury, type: agency, label: "U.S. Department of the Treasury", short_label: "Treasury" }
   - { id: op-idme, type: operator, label: "ID.me (identity proofing)", short_label: "ID.me" }
   - { id: sor-tap, type: system_of_record, label: "Treasury .031 — Trump Accounts Program (TAP)", short_label: "Treasury TAP system" }
@@ -51,6 +50,7 @@ edges:
 
   # --- documented operation + intake landing ---
   - { id: e-idme-operates, type: operates, from: op-idme, to: portal-trump-accounts, claim: documented, receipts: [r-ta-idme] }
+  - { id: e-portal-hosts-form, type: hosts, from: portal-trump-accounts, to: form-4547, claim: documented, receipts: [r-ta-treasury-pr] }
   - { id: e-feeds-tap, type: feeds, from: form-4547, to: sor-tap, claim: documented, receipts: [r-ta-sorn, r-ta-treasury-pr] }
 
   # --- authorization edges (instrument permits; one targets a downstream edge) ---

@@ -198,6 +198,12 @@ node sits in is derived from its lane, which is cartographic, not a claim about 
 Status: the layer on/off defaults and lane separation are implemented in the renderer; the
 vertical band **stacking** is the next renderer slice (rule recorded here first).
 
+> **Next-slice acceptance.** When a secondary layer is enabled, *Legal authority* renders as an
+> upper band, *Possible inferences* as a lower band, and *External power* as the lowest
+> (off-by-default) band — all sharing the same lane (stage) columns as the documented spine.
+> The documented spine stays primary; cross-band relations render as faint connectors; no new
+> claims, no new cases. Scoped layout-only.
+
 ### Deferred candidate (named, not built): atlas view vs evidence view
 
 A future split — a cognition-first "atlas" view and an admissibility-first "evidence"

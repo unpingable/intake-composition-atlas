@@ -1,0 +1,69 @@
+case_id: difsla-ssi-irs-match
+title: "IRS/SSA DIFSLA (Match #1016) — SSI recipients matched against IRS unearned-income records"
+status: recurring
+date_surfaced: 2026-06-12
+# The canonical computer-matching specimen: a documented join, not an inference. Contrast with
+# trump-accounts (new intake surface, inferred composition) — here the composition is the
+# openly-agreed machinery, complete with a verify-before-adverse-action safeguard.
+headline: "How SSI recipients become an IRS income match"
+dek: >
+  SSA sends recipient identifiers to the IRS, which matches them against information-return
+  records and returns unearned-income data used to verify SSI eligibility and benefit amounts —
+  a written computer matching agreement, not an inference.
+why: >
+  This is documented composition: a benefit recipient's identifier is joined to IRS income
+  records by agreement, and the result can reduce or recover their payment. The same match has
+  recurred since 2000, with a statutory safeguard requiring SSA to verify and notice before any
+  adverse action.
+callouts:
+  collection: "An SSI claim is on file"
+  data: "SSA builds an SSN finder file"
+  custody: "IRS matches income records"
+  decision: "Benefits are verified or recovered"
+
+nodes:
+  - { id: form-ssi-claim, type: form, label: "SSI claim (Title XVI application / recipient record)", short_label: "SSI claim" }
+  - { id: fc-ssn, type: field_class, label: "SSN + name control (finder file)", short_label: "SSN + name control" }
+  - { id: sor-ssa-ssr, type: system_of_record, label: "SSA Supplemental Security Record (SSR)", short_label: "SSA SSI Record" }
+  - { id: sor-irs-irmf, type: system_of_record, label: "IRS Information Returns Master File (IRMF)", short_label: "IRS info returns (IRMF)" }
+  - { id: instrument-6103, type: instrument, label: "26 U.S.C. § 6103(l)(7) + CMA Match #1016", short_label: "§ 6103(l)(7) + CMA #1016" }
+  - { id: ds-eligibility, type: decision_surface, label: "SSI eligibility / benefit amount determination", short_label: "SSI eligibility / amount" }
+  - { id: ds-overpayment, type: decision_surface, label: "Overpayment detection & recovery", short_label: "Overpayment recovery" }
+
+edges:
+  - { id: e-collect-ssn, type: collects, from: form-ssi-claim, to: fc-ssn, claim: documented, receipts: [r-difsla-cma, r-difsla-irm] }
+  - { id: e-feeds-ssr, type: feeds, from: form-ssi-claim, to: sor-ssa-ssr, claim: documented, receipts: [r-difsla-cma] }
+
+  # THE canonical edge: a documented system-to-system join, witnessed by a published CMA.
+  - id: e-match
+    type: matches_against
+    from: sor-ssa-ssr
+    to: sor-irs-irmf
+    claim: documented
+    receipts: [r-difsla-cma, r-difsla-irm, r-difsla-fr2000]
+    contestation:
+      notice: "Privacy Act matching notice published in the Federal Register (SSA/IRS Match #1016)"
+      appeal: "CMPPA, 5 U.S.C. 552a(p): SSA must independently verify and give notice + a 30-day chance to contest before any adverse action"
+
+  # statute authorizes the disclosure; the CMA above witnesses the actual match
+  - { id: e-auth-match, type: authorizes, from: instrument-6103, to: e-match, claim: authorized, receipts: [r-difsla-6103] }
+
+  # documented decision surfaces — with REAL contestation, unlike trump-accounts' none_identified
+  - id: e-consume-elig
+    type: consumed_by
+    from: sor-ssa-ssr
+    to: ds-eligibility
+    claim: documented
+    receipts: [r-difsla-cma, r-difsla-cmppa]
+    contestation:
+      notice: "SSA notice of the income discrepancy found by the match"
+      appeal: "recipient may contest before SSI is reduced or suspended; SSA must independently verify the IRS data first (CMPPA)"
+  - id: e-consume-overpay
+    type: consumed_by
+    from: sor-ssa-ssr
+    to: ds-overpayment
+    claim: documented
+    receipts: [r-difsla-cma]
+    contestation:
+      notice: "SSA overpayment notice"
+      appeal: "right to request reconsideration or waiver of the overpayment"

@@ -1,0 +1,15 @@
+id: r-difsla-cma
+kind: cma
+url: https://www.ssa.gov/privacy/cma/2025/CMA%201016%20%20SSA%20-%20Treasury%20IRS%20-%20Final%20-Fully%20Executed%2010.20.25.pdf
+archived: ""   # source returns 403 to automated fetch; archive in a currency pass (lookup-first)
+retrieved: 2026-06-12
+basis: >
+  Computer Matching Agreement, SSA Match #1016 / IRS Project #066 (DIFSLA), fully executed
+  Oct 20 2025, effective Jan 1 2026 – Jun 30 2027. Under IRC § 6103(l)(7) the IRS discloses
+  unearned-income information from the Information Returns Master File to SSA; SSA submits an
+  SSN-based finder file (from the Supplemental Security Record), IRS matches it against
+  information returns (e.g. Form 1099) and returns unearned-income records; SSA uses the result
+  to verify SSI (Title XVI) eligibility and correct benefit amounts. FY2023 cost-benefit:
+  ~$74.5M projected SSI benefit from overpayments recovered and ongoing payments corrected.
+  (Paraphrase: the SSA-hosted PDF blocks automated retrieval; facts corroborated by the SSA CMA
+  index and IRS IRM 11.3.29.)

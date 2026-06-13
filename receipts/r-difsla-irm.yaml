@@ -1,0 +1,12 @@
+id: r-difsla-irm
+kind: agency_statement
+url: https://www.irs.gov/irm/part11/irm_11-003-029
+archived: ""   # TODO(currency pass): archive lookup-first
+retrieved: 2026-06-12
+basis: >
+  IRS Internal Revenue Manual 11.3.29 (DIFSLA): "Pursuant to IRC 6103(l)(7)(B), the IRS shall
+  disclose unearned income information from the IRMF [Information Returns Master File] to
+  federal, state, and local agencies administering the federal benefit programs pursuant to the
+  DIFSLA program." Recipient agencies may use the information "only to determine eligibility or
+  to correct amount of benefits" and may not redisclose it to contractors; detailed request
+  procedures are in IRS Publication 3373.

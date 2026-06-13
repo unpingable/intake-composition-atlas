@@ -35,10 +35,19 @@
     .ck-speculative .dot { border-color: #555; border-top-style: dotted; }
     .ck h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #fff; margin-bottom: 6px; }
     .ck p { font-size: 12px; color: #888; line-height: 1.5; }
-    .cta { display: inline-block; background: #1a1a1a; border: 1px solid #333; color: #e0e0e0;
-      padding: 12px 22px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 600;
-      transition: border-color .2s, background .2s; }
-    .cta:hover { border-color: #4fc3f7; background: #161616; }
+    .cases-h { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #666; margin-bottom: 16px; }
+    .cases { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .case { display: block; background: #111; border: 1px solid #222; border-radius: 10px; padding: 22px 22px 18px;
+      text-decoration: none; color: inherit; transition: border-color .2s, background .2s; }
+    .case:hover { border-color: #4fc3f7; background: #141414; }
+    .case-tag { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+      padding: 3px 8px; border-radius: 4px; margin-bottom: 12px; }
+    .tag-active { background: #1a1200; color: #f5a623; }
+    .tag-recurring { background: #001a2e; color: #4fc3f7; }
+    .case h3 { font-size: 18px; font-weight: 600; color: #fff; line-height: 1.3; margin-bottom: 8px; }
+    .case p { font-size: 13.5px; color: #999; line-height: 1.55; margin-bottom: 14px; }
+    .case-go { font-size: 13px; font-weight: 600; color: #4fc3f7; }
+    @media (max-width: 640px) { .cases { grid-template-columns: 1fr; } }
     .caption { font-size: 13px; color: #666; margin-top: 14px; font-style: italic; }
     footer { font-size: 12px; color: #555; line-height: 1.7; margin-top: 48px; border-top: 1px solid #1a1a1a; padding-top: 20px; }
     footer a { color: #888; }
@@ -64,8 +73,22 @@
       <div class="ck ck-speculative"><div class="dot"></div><h3>Speculative</h3><p>Incentive analysis only. Hidden by default.</p></div>
     </div>
 
-    <a class="cta" href="graph/">Open the composition graph &rarr;</a>
-    <div class="caption">Default view: documented edges only. Toggle on authorized, then inferred — the graph inflates. That delta is the finding.</div>
+    <h2 class="cases-h">Cases</h2>
+    <div class="cases">
+      <a class="case" href="graph/?case=trump-accounts">
+        <span class="case-tag tag-active">Active · new intake surface</span>
+        <h3>How a child-savings form becomes a joinable government record</h3>
+        <p>TrumpAccounts.gov / Form 4547 into the Treasury TAP system of records — documented collection, inferred household composition.</p>
+        <span class="case-go">Open case &rarr;</span>
+      </a>
+      <a class="case" href="graph/?case=difsla-ssi-irs-match">
+        <span class="case-tag tag-recurring">Recurring · canonical computer match</span>
+        <h3>How SSI recipients become an IRS income match</h3>
+        <p>SSA ↔ IRS DIFSLA (Match #1016) — a documented join, with a verify-before-adverse-action safeguard. The machinery, openly agreed.</p>
+        <span class="case-go">Open case &rarr;</span>
+      </a>
+    </div>
+    <div class="caption">Each case is a documented-path graphic. Toggle layers to see what is permitted and what is possible — that delta is the finding.</div>
 
     <footer>
       The people who bear the consequences cannot see the join.<br>

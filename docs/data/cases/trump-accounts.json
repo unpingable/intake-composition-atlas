@@ -487,5 +487,23 @@
       },
       "classes": "inferred inference"
     }
+  ],
+  "cases": [
+    {
+      "case_id": "trump-accounts",
+      "title": "TrumpAccounts.gov / Form 4547 \u2014 child + guardian intake into the Treasury TAP system of records",
+      "status": "active",
+      "headline": "How a child-savings form becomes a joinable government record",
+      "dek": "Documented records show TrumpAccounts.gov and IRS Form 4547 collecting a child's and a guardian's identity \u2014 including both Social Security numbers \u2014 and routing them into a Treasury system of record that drives pilot-eligibility and oversight decisions.\n",
+      "why": "These are not just values. They are join keys: stable identifiers and relationship fields that can link a child, a household, a tax filer, benefit eligibility, and account administration into one composable record.\n",
+      "summary": "TrumpAccounts.gov collects child and parent/guardian identity (including both SSNs) via IRS Form 4547 to open a Trump account (a \u00a7 530A IRA) and elect a one-time $1,000 Treasury pilot contribution. Intake is identity-proofed through ID.me and lands in Treasury's \".031 \u2014 Trump Accounts Program (TAP)\" Privacy Act system of records, which exists for administration, oversight, and compliance. The statute directs Treasury to disburse the $1,000, but no public document witnesses how the eligibility records move IRS\u2192Treasury or are matched against SSA \u2014 so those edges are AUTHORIZED, not documented. The composed parent\u2194child identity linkage is an inferred household graph.\n",
+      "callouts": {
+        "intake": "People enter through the portal",
+        "collection": "Form 4547 creates the record",
+        "data": "Fields become joinable keys",
+        "custody": "Treasury TAP receives the record",
+        "decision": "Eligibility & oversight decisions"
+      }
+    }
   ]
 }

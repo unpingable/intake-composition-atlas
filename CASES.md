@@ -6,7 +6,10 @@ shared across edges.
 
 | Case | Status | Nodes | Edges (doc / auth / inf) | Notes |
 |---|---|---|---|---|
-| [trump-accounts](cases/trump-accounts.yaml) | active | 14 | 8 / 3 / 1 | TrumpAccounts.gov / Form 4547 → Treasury TAP system of records. Carries the `signed_is_not_witnessed` worked example (`e-share-disburse`). |
+| [trump-accounts](cases/trump-accounts.yaml) | active | 13 | 9 / 3 / 1 | TrumpAccounts.gov / Form 4547 → Treasury TAP system of records. New intake surface, documented collection, inferred household composition. Carries the `signed_is_not_witnessed` worked example (`e-share-disburse`). |
+| [difsla-ssi-irs-match](cases/difsla-ssi-irs-match.yaml) | recurring | 7 | 5 / 1 / 0 | IRS/SSA DIFSLA Match #1016. The canonical computer match — first real `matches_against` + `cma` receipt, and the first **documented** join (not inferred). Carries genuine contestation safeguards (verify-before-adverse-action, CMPPA). |
+
+Each case renders as its own explainer at `graph/?case=<case_id>`; the splash lists them.
 
 ## Roadmap (prioritized)
 
@@ -17,16 +20,12 @@ real *documented* join. Each will extend `edge_types` (e.g. `routes_via`, `match
 `returns_verification`, `supports_decision`, `creates_contestation_path`) as the forcing case
 arrives — named here, added with the case, not before.
 
-**1. IRS/SSA DIFSLA — SSI unearned-income match** — *the canonical CMA specimen, do first.*
-> "How SSI recipients become an IRS income match."
-SSA sends SSN + name-control to IRS; IRS matches against the Information Return Master File and
-returns payer/payee/income records used to verify SSI eligibility and benefit amount. The
-ur-pattern (identifiers in, matched income out) with a written CMA, statutory authority, named
-data elements, a **verify-before-adverse-action** safeguard node, and a documented **4.13:1
-benefit/cost ratio** — the "decision gets cheaper" payload as *documented*, not inferred.
-Lineage: FR 2000-29281 → re-established → **SSA Match #1016 / IRS Project #066** (current CMA,
-eff. 2026). First real `matches_against` (claim `documented`, receipt kind `cma`).
-Receipts: SSA CMA 1016 (2025 re-establishment PDF, ssa.gov/privacy/cma); FR 2000-29281 (historical).
+**1. IRS/SSA DIFSLA — SSI unearned-income match** — ✅ **BUILT** (`difsla-ssi-irs-match`).
+The canonical computer match; first real `matches_against` + `cma`, first *documented* join, with
+genuine contestation safeguards. (Note: the 4.13:1 benefit/cost figure cited in early research is
+not yet wired as a node — the CMA PDF is 403 to automated fetch; the FY2023 ~$74.5M figure is in
+the `r-difsla-cma` basis. Add the cost-benefit detail in a later pass if the source becomes
+fetchable.) See the case table above.
 
 **2. ACA Marketplace / Federal Data Services Hub** — modern multi-source eligibility routing.
 > "How a Marketplace application becomes a federal data match."

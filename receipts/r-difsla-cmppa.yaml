@@ -1,0 +1,11 @@
+id: r-difsla-cmppa
+kind: statute
+url: https://www.law.cornell.edu/uscode/text/5/552a
+archived: ""   # TODO(currency pass)
+retrieved: 2026-06-12
+basis: >
+  Computer Matching and Privacy Protection Act, 5 U.S.C. § 552a(p): an agency may not suspend,
+  terminate, reduce, or make a final denial of a benefit to an individual as a result of
+  information produced by a matching program until the agency has independently verified the
+  information and provided the individual notice and a 30-day opportunity to contest. This is the
+  statutory verify-before-adverse-action safeguard cited in the edge contestation blocks.

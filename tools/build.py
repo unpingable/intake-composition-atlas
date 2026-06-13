@@ -65,6 +65,15 @@ EDGE_ROLE = {
 }
 
 
+def case_meta(c):
+    # editorial framing shipped with each case (far-view headline/dek + per-lane callouts)
+    return {
+        "case_id": c.get("case_id"), "title": c.get("title"), "status": c.get("status"),
+        "headline": c.get("headline"), "dek": c.get("dek"), "why": c.get("why"),
+        "summary": c.get("summary"), "callouts": c.get("callouts", {}),
+    }
+
+
 def short_label(n):
     if n.get("short_label"):
         return n["short_label"]
@@ -171,13 +180,8 @@ def main(argv=None):
 
     receipts, cases = collect(args.root)
     elements = to_elements(cases, receipts, args.include_speculative)
-    # Case-level editorial metadata (far-view framing: headline / dek / nut graf).
-    # Reader-facing copy leads; the doctrine lives in the receipts drawer.
-    elements["cases"] = [{
-        "case_id": c.get("case_id"), "title": c.get("title"),
-        "headline": c.get("headline"), "dek": c.get("dek"),
-        "why": c.get("why"), "summary": c.get("summary"), "status": c.get("status"),
-    } for c in cases]
+    # Merged atlas view carries every case's editorial metadata (far-view framing).
+    elements["cases"] = [case_meta(c) for c in cases]
 
     os.makedirs(args.out, exist_ok=True)
     os.makedirs(os.path.join(args.out, "cases"), exist_ok=True)
@@ -187,6 +191,7 @@ def main(argv=None):
     for case in cases:
         cid = case.get("case_id")
         slice_ = to_elements([case], receipts, args.include_speculative)
+        slice_["cases"] = [case_meta(case)]   # each per-case page renders as its own explainer
         with open(os.path.join(args.out, "cases", f"{cid}.json"), "w") as fh:
             json.dump(slice_, fh, indent=2, default=str)
 

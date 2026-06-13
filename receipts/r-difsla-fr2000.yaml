@@ -1,0 +1,10 @@
+id: r-difsla-fr2000
+kind: agency_statement
+url: https://www.federalregister.gov/documents/2000/11/16/00-29281/privacy-act-of-1974-as-amended-computer-matching-program-ssa-internal-revenue-service-irs-match
+archived: ""   # TODO(currency pass)
+retrieved: 2026-06-12
+basis: >
+  Federal Register notice of the SSA/IRS computer matching program, Match #1016 (Nov 16 2000):
+  the IRS discloses return information to SSA to verify Title XVI (SSI) eligibility and/or correct
+  benefit amounts for aged, blind, and disabled individuals — establishing the unearned-income
+  match that the current CMA re-establishes. Cited for lineage (the match has recurred since 2000).

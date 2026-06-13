@@ -12,6 +12,12 @@ why: >
   These are not just values. They are join keys: stable identifiers and relationship fields that
   can link a child, a household, a tax filer, benefit eligibility, and account administration into
   one composable record.
+callouts:
+  intake: "People enter through the portal"
+  collection: "Form 4547 creates the record"
+  data: "Fields become joinable keys"
+  custody: "Treasury TAP receives the record"
+  decision: "Eligibility & oversight decisions"
 summary: >
   TrumpAccounts.gov collects child and parent/guardian identity (including both SSNs) via IRS
   Form 4547 to open a Trump account (a § 530A IRA) and elect a one-time $1,000 Treasury pilot

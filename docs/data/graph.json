@@ -2,6 +2,83 @@
   "nodes": [
     {
       "data": {
+        "id": "form-ssi-claim",
+        "type": "form",
+        "label": "SSI claim (Title XVI application / recipient record)",
+        "short_label": "SSI claim",
+        "lane": "collection",
+        "rank": 2,
+        "case": "difsla-ssi-irs-match"
+      }
+    },
+    {
+      "data": {
+        "id": "fc-ssn",
+        "type": "field_class",
+        "label": "SSN + name control (finder file)",
+        "short_label": "SSN + name control",
+        "lane": "data",
+        "rank": 3,
+        "case": "difsla-ssi-irs-match"
+      }
+    },
+    {
+      "data": {
+        "id": "sor-ssa-ssr",
+        "type": "system_of_record",
+        "label": "SSA Supplemental Security Record (SSR)",
+        "short_label": "SSA SSI Record",
+        "lane": "custody",
+        "rank": 4,
+        "case": "difsla-ssi-irs-match"
+      }
+    },
+    {
+      "data": {
+        "id": "sor-irs-irmf",
+        "type": "system_of_record",
+        "label": "IRS Information Returns Master File (IRMF)",
+        "short_label": "IRS info returns (IRMF)",
+        "lane": "custody",
+        "rank": 4,
+        "case": "difsla-ssi-irs-match"
+      }
+    },
+    {
+      "data": {
+        "id": "instrument-6103",
+        "type": "instrument",
+        "label": "26 U.S.C. \u00a7 6103(l)(7) + CMA Match #1016",
+        "short_label": "\u00a7 6103(l)(7) + CMA #1016",
+        "lane": "authority",
+        "rank": 0,
+        "case": "difsla-ssi-irs-match"
+      }
+    },
+    {
+      "data": {
+        "id": "ds-eligibility",
+        "type": "decision_surface",
+        "label": "SSI eligibility / benefit amount determination",
+        "short_label": "SSI eligibility / amount",
+        "lane": "decision",
+        "rank": 6,
+        "case": "difsla-ssi-irs-match"
+      }
+    },
+    {
+      "data": {
+        "id": "ds-overpayment",
+        "type": "decision_surface",
+        "label": "Overpayment detection & recovery",
+        "short_label": "Overpayment recovery",
+        "lane": "decision",
+        "rank": 6,
+        "case": "difsla-ssi-irs-match"
+      }
+    },
+    {
+      "data": {
         "id": "portal-trump-accounts",
         "type": "portal",
         "label": "TrumpAccounts.gov",
@@ -112,17 +189,6 @@
     },
     {
       "data": {
-        "id": "ds-eligibility",
-        "type": "decision_surface",
-        "label": "Pilot-program eligibility determination",
-        "short_label": "Pilot eligibility",
-        "lane": "decision",
-        "rank": 6,
-        "case": "trump-accounts"
-      }
-    },
-    {
-      "data": {
         "id": "ds-compliance",
         "type": "decision_surface",
         "label": "Program oversight / compliance / integrity",
@@ -145,6 +211,191 @@
     }
   ],
   "edges": [
+    {
+      "data": {
+        "id": "e-collect-ssn",
+        "source": "form-ssi-claim",
+        "target": "fc-ssn",
+        "type": "collects",
+        "claim": "documented",
+        "case": "difsla-ssi-irs-match",
+        "role": "flow",
+        "receipts": [
+          {
+            "id": "r-difsla-cma",
+            "kind": "cma",
+            "url": "https://www.ssa.gov/privacy/cma/2025/CMA%201016%20%20SSA%20-%20Treasury%20IRS%20-%20Final%20-Fully%20Executed%2010.20.25.pdf",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Computer Matching Agreement, SSA Match #1016 / IRS Project #066 (DIFSLA), fully executed Oct 20 2025, effective Jan 1 2026 \u2013 Jun 30 2027. Under IRC \u00a7 6103(l)(7) the IRS discloses unearned-income information from the Information Returns Master File to SSA; SSA submits an SSN-based finder file (from the Supplemental Security Record), IRS matches it against information returns (e.g. Form 1099) and returns unearned-income records; SSA uses the result to verify SSI (Title XVI) eligibility and correct benefit amounts. FY2023 cost-benefit: ~$74.5M projected SSI benefit from overpayments recovered and ongoing payments corrected. (Paraphrase: the SSA-hosted PDF blocks automated retrieval; facts corroborated by the SSA CMA index and IRS IRM 11.3.29.)\n"
+          },
+          {
+            "id": "r-difsla-irm",
+            "kind": "agency_statement",
+            "url": "https://www.irs.gov/irm/part11/irm_11-003-029",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "IRS Internal Revenue Manual 11.3.29 (DIFSLA): \"Pursuant to IRC 6103(l)(7)(B), the IRS shall disclose unearned income information from the IRMF [Information Returns Master File] to federal, state, and local agencies administering the federal benefit programs pursuant to the DIFSLA program.\" Recipient agencies may use the information \"only to determine eligibility or to correct amount of benefits\" and may not redisclose it to contractors; detailed request procedures are in IRS Publication 3373.\n"
+          }
+        ],
+        "derivation": []
+      },
+      "classes": "documented flow"
+    },
+    {
+      "data": {
+        "id": "e-feeds-ssr",
+        "source": "form-ssi-claim",
+        "target": "sor-ssa-ssr",
+        "type": "feeds",
+        "claim": "documented",
+        "case": "difsla-ssi-irs-match",
+        "role": "flow",
+        "receipts": [
+          {
+            "id": "r-difsla-cma",
+            "kind": "cma",
+            "url": "https://www.ssa.gov/privacy/cma/2025/CMA%201016%20%20SSA%20-%20Treasury%20IRS%20-%20Final%20-Fully%20Executed%2010.20.25.pdf",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Computer Matching Agreement, SSA Match #1016 / IRS Project #066 (DIFSLA), fully executed Oct 20 2025, effective Jan 1 2026 \u2013 Jun 30 2027. Under IRC \u00a7 6103(l)(7) the IRS discloses unearned-income information from the Information Returns Master File to SSA; SSA submits an SSN-based finder file (from the Supplemental Security Record), IRS matches it against information returns (e.g. Form 1099) and returns unearned-income records; SSA uses the result to verify SSI (Title XVI) eligibility and correct benefit amounts. FY2023 cost-benefit: ~$74.5M projected SSI benefit from overpayments recovered and ongoing payments corrected. (Paraphrase: the SSA-hosted PDF blocks automated retrieval; facts corroborated by the SSA CMA index and IRS IRM 11.3.29.)\n"
+          }
+        ],
+        "derivation": []
+      },
+      "classes": "documented flow"
+    },
+    {
+      "data": {
+        "id": "e-match",
+        "source": "sor-ssa-ssr",
+        "target": "sor-irs-irmf",
+        "type": "matches_against",
+        "claim": "documented",
+        "case": "difsla-ssi-irs-match",
+        "role": "flow",
+        "receipts": [
+          {
+            "id": "r-difsla-cma",
+            "kind": "cma",
+            "url": "https://www.ssa.gov/privacy/cma/2025/CMA%201016%20%20SSA%20-%20Treasury%20IRS%20-%20Final%20-Fully%20Executed%2010.20.25.pdf",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Computer Matching Agreement, SSA Match #1016 / IRS Project #066 (DIFSLA), fully executed Oct 20 2025, effective Jan 1 2026 \u2013 Jun 30 2027. Under IRC \u00a7 6103(l)(7) the IRS discloses unearned-income information from the Information Returns Master File to SSA; SSA submits an SSN-based finder file (from the Supplemental Security Record), IRS matches it against information returns (e.g. Form 1099) and returns unearned-income records; SSA uses the result to verify SSI (Title XVI) eligibility and correct benefit amounts. FY2023 cost-benefit: ~$74.5M projected SSI benefit from overpayments recovered and ongoing payments corrected. (Paraphrase: the SSA-hosted PDF blocks automated retrieval; facts corroborated by the SSA CMA index and IRS IRM 11.3.29.)\n"
+          },
+          {
+            "id": "r-difsla-irm",
+            "kind": "agency_statement",
+            "url": "https://www.irs.gov/irm/part11/irm_11-003-029",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "IRS Internal Revenue Manual 11.3.29 (DIFSLA): \"Pursuant to IRC 6103(l)(7)(B), the IRS shall disclose unearned income information from the IRMF [Information Returns Master File] to federal, state, and local agencies administering the federal benefit programs pursuant to the DIFSLA program.\" Recipient agencies may use the information \"only to determine eligibility or to correct amount of benefits\" and may not redisclose it to contractors; detailed request procedures are in IRS Publication 3373.\n"
+          },
+          {
+            "id": "r-difsla-fr2000",
+            "kind": "agency_statement",
+            "url": "https://www.federalregister.gov/documents/2000/11/16/00-29281/privacy-act-of-1974-as-amended-computer-matching-program-ssa-internal-revenue-service-irs-match",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Federal Register notice of the SSA/IRS computer matching program, Match #1016 (Nov 16 2000): the IRS discloses return information to SSA to verify Title XVI (SSI) eligibility and/or correct benefit amounts for aged, blind, and disabled individuals \u2014 establishing the unearned-income match that the current CMA re-establishes. Cited for lineage (the match has recurred since 2000).\n"
+          }
+        ],
+        "derivation": [],
+        "contestation": {
+          "notice": "Privacy Act matching notice published in the Federal Register (SSA/IRS Match #1016)",
+          "appeal": "CMPPA, 5 U.S.C. 552a(p): SSA must independently verify and give notice + a 30-day chance to contest before any adverse action"
+        },
+        "authorized_by": "instrument-6103",
+        "authorized_by_label": "\u00a7 6103(l)(7) + CMA #1016"
+      },
+      "classes": "documented flow"
+    },
+    {
+      "data": {
+        "id": "e-auth-match",
+        "source": "instrument-6103",
+        "target": "sor-irs-irmf",
+        "type": "authorizes",
+        "claim": "authorized",
+        "case": "difsla-ssi-irs-match",
+        "role": "authorization",
+        "receipts": [
+          {
+            "id": "r-difsla-6103",
+            "kind": "statute",
+            "url": "https://www.law.cornell.edu/uscode/text/26/6103",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "26 U.S.C. \u00a7 6103(l)(7) directs the Secretary of the Treasury to disclose return information with respect to unearned income to federal, state, and local agencies administering specified federally-assisted benefit programs \u2014 including Supplemental Security Income (Title XVI of the Social Security Act). AUTHORIZES the disclosure; it does not, by itself, witness the match (the CMA does).\n"
+          }
+        ],
+        "derivation": [],
+        "authorizes_edge": "e-match"
+      },
+      "classes": "authorized authorization"
+    },
+    {
+      "data": {
+        "id": "e-consume-elig",
+        "source": "sor-ssa-ssr",
+        "target": "ds-eligibility",
+        "type": "consumed_by",
+        "claim": "documented",
+        "case": "difsla-ssi-irs-match",
+        "role": "flow",
+        "receipts": [
+          {
+            "id": "r-difsla-cma",
+            "kind": "cma",
+            "url": "https://www.ssa.gov/privacy/cma/2025/CMA%201016%20%20SSA%20-%20Treasury%20IRS%20-%20Final%20-Fully%20Executed%2010.20.25.pdf",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Computer Matching Agreement, SSA Match #1016 / IRS Project #066 (DIFSLA), fully executed Oct 20 2025, effective Jan 1 2026 \u2013 Jun 30 2027. Under IRC \u00a7 6103(l)(7) the IRS discloses unearned-income information from the Information Returns Master File to SSA; SSA submits an SSN-based finder file (from the Supplemental Security Record), IRS matches it against information returns (e.g. Form 1099) and returns unearned-income records; SSA uses the result to verify SSI (Title XVI) eligibility and correct benefit amounts. FY2023 cost-benefit: ~$74.5M projected SSI benefit from overpayments recovered and ongoing payments corrected. (Paraphrase: the SSA-hosted PDF blocks automated retrieval; facts corroborated by the SSA CMA index and IRS IRM 11.3.29.)\n"
+          },
+          {
+            "id": "r-difsla-cmppa",
+            "kind": "statute",
+            "url": "https://www.law.cornell.edu/uscode/text/5/552a",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Computer Matching and Privacy Protection Act, 5 U.S.C. \u00a7 552a(p): an agency may not suspend, terminate, reduce, or make a final denial of a benefit to an individual as a result of information produced by a matching program until the agency has independently verified the information and provided the individual notice and a 30-day opportunity to contest. This is the statutory verify-before-adverse-action safeguard cited in the edge contestation blocks.\n"
+          }
+        ],
+        "derivation": [],
+        "contestation": {
+          "notice": "SSA notice of the income discrepancy found by the match",
+          "appeal": "recipient may contest before SSI is reduced or suspended; SSA must independently verify the IRS data first (CMPPA)"
+        }
+      },
+      "classes": "documented flow"
+    },
+    {
+      "data": {
+        "id": "e-consume-overpay",
+        "source": "sor-ssa-ssr",
+        "target": "ds-overpayment",
+        "type": "consumed_by",
+        "claim": "documented",
+        "case": "difsla-ssi-irs-match",
+        "role": "flow",
+        "receipts": [
+          {
+            "id": "r-difsla-cma",
+            "kind": "cma",
+            "url": "https://www.ssa.gov/privacy/cma/2025/CMA%201016%20%20SSA%20-%20Treasury%20IRS%20-%20Final%20-Fully%20Executed%2010.20.25.pdf",
+            "archived": "",
+            "retrieved": "2026-06-12",
+            "basis": "Computer Matching Agreement, SSA Match #1016 / IRS Project #066 (DIFSLA), fully executed Oct 20 2025, effective Jan 1 2026 \u2013 Jun 30 2027. Under IRC \u00a7 6103(l)(7) the IRS discloses unearned-income information from the Information Returns Master File to SSA; SSA submits an SSN-based finder file (from the Supplemental Security Record), IRS matches it against information returns (e.g. Form 1099) and returns unearned-income records; SSA uses the result to verify SSI (Title XVI) eligibility and correct benefit amounts. FY2023 cost-benefit: ~$74.5M projected SSI benefit from overpayments recovered and ongoing payments corrected. (Paraphrase: the SSA-hosted PDF blocks automated retrieval; facts corroborated by the SSA CMA index and IRS IRM 11.3.29.)\n"
+          }
+        ],
+        "derivation": [],
+        "contestation": {
+          "notice": "SSA overpayment notice",
+          "appeal": "right to request reconsideration or waiver of the overpayment"
+        }
+      },
+      "classes": "documented flow"
+    },
     {
       "data": {
         "id": "e-collect-guardian",
@@ -490,13 +741,35 @@
   ],
   "cases": [
     {
+      "case_id": "difsla-ssi-irs-match",
+      "title": "IRS/SSA DIFSLA (Match #1016) \u2014 SSI recipients matched against IRS unearned-income records",
+      "status": "recurring",
+      "headline": "How SSI recipients become an IRS income match",
+      "dek": "SSA sends recipient identifiers to the IRS, which matches them against information-return records and returns unearned-income data used to verify SSI eligibility and benefit amounts \u2014 a written computer matching agreement, not an inference.\n",
+      "why": "This is documented composition: a benefit recipient's identifier is joined to IRS income records by agreement, and the result can reduce or recover their payment. The same match has recurred since 2000, with a statutory safeguard requiring SSA to verify and notice before any adverse action.\n",
+      "summary": null,
+      "callouts": {
+        "collection": "An SSI claim is on file",
+        "data": "SSA builds an SSN finder file",
+        "custody": "IRS matches income records",
+        "decision": "Benefits are verified or recovered"
+      }
+    },
+    {
       "case_id": "trump-accounts",
       "title": "TrumpAccounts.gov / Form 4547 \u2014 child + guardian intake into the Treasury TAP system of records",
+      "status": "active",
       "headline": "How a child-savings form becomes a joinable government record",
       "dek": "Documented records show TrumpAccounts.gov and IRS Form 4547 collecting a child's and a guardian's identity \u2014 including both Social Security numbers \u2014 and routing them into a Treasury system of record that drives pilot-eligibility and oversight decisions.\n",
       "why": "These are not just values. They are join keys: stable identifiers and relationship fields that can link a child, a household, a tax filer, benefit eligibility, and account administration into one composable record.\n",
       "summary": "TrumpAccounts.gov collects child and parent/guardian identity (including both SSNs) via IRS Form 4547 to open a Trump account (a \u00a7 530A IRA) and elect a one-time $1,000 Treasury pilot contribution. Intake is identity-proofed through ID.me and lands in Treasury's \".031 \u2014 Trump Accounts Program (TAP)\" Privacy Act system of records, which exists for administration, oversight, and compliance. The statute directs Treasury to disburse the $1,000, but no public document witnesses how the eligibility records move IRS\u2192Treasury or are matched against SSA \u2014 so those edges are AUTHORIZED, not documented. The composed parent\u2194child identity linkage is an inferred household graph.\n",
-      "status": "active"
+      "callouts": {
+        "intake": "People enter through the portal",
+        "collection": "Form 4547 creates the record",
+        "data": "Fields become joinable keys",
+        "custody": "Treasury TAP receives the record",
+        "decision": "Eligibility & oversight decisions"
+      }
     }
   ]
 }

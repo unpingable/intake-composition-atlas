@@ -17,15 +17,19 @@
   <meta name="twitter:description" content="What is proven, what is permitted, what is possible — edge by edge.">
   <meta name="twitter:image" content="https://unpingable.github.io/intake-composition-atlas/og-image.png">
   <link rel="stylesheet" href="https://unpkg.com/@xyflow/react@12.3.5/dist/style.css">
+  <link rel="preconnect" href="https://fonts.bunny.net">
+  <link rel="stylesheet" href="https://fonts.bunny.net/css?family=newsreader:400,500,600|ibm-plex-mono:400,500&display=swap">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body, #root { margin: 0; width: 100%; height: 100%; overflow: hidden; }
     :root {
       --bg: #08090b; --panel: #0d0f13; --line: #1d2026; --muted: #6b7280; --text: #d6dae0;
       --documented: #4fc3f7; --authorized: #f5a623; --inferred: #c08bff; --speculative: #5a6068;
+      --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+      --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: var(--bg); color: var(--text); }
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); }
     .page { display: grid; grid-template-rows: auto auto 1fr auto; width: 100vw; height: 100vh; }
 
     header { padding: 10px 22px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
@@ -52,9 +56,9 @@
     .toggle.inferred.on   { border-color: #4a3a66; background: #160e22; }
     .toggle.speculative.on{ border-color: #33383f; background: #14161a; }
 
-    .editorial { padding: 11px 22px 10px; border-bottom: 1px solid var(--line); background: #0a0c0f; }
-    .editorial h1 { font-size: 19px; font-weight: 700; color: #fff; letter-spacing: -0.015em; line-height: 1.25; margin-bottom: 5px; }
-    .editorial .dek { font-size: 13px; color: #9aa0a8; line-height: 1.55; max-width: 920px; }
+    .editorial { padding: 13px 24px 12px; border-bottom: 1px solid var(--line); background: #0a0c0f; }
+    .editorial h1 { font-family: var(--serif); font-size: 25px; font-weight: 600; color: #fff; letter-spacing: -0.01em; line-height: 1.18; margin-bottom: 6px; }
+    .editorial .dek { font-family: var(--serif); font-size: 16px; font-weight: 400; color: #b3bbc5; line-height: 1.5; max-width: 1000px; }
 
     .stage { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
     .react-flow { background:
@@ -64,76 +68,80 @@
     .react-flow__attribution { display: none; }
     .react-flow__pane { cursor: default; }
 
-    .station { border: 1.5px solid #888; border-radius: 9px; background: #0e1116; padding: 9px 13px;
-      text-align: center; color: #eef1f5; font-size: 13.5px; font-weight: 600; line-height: 1.2; cursor: pointer;
+    .station { border: 1.5px solid #888; border-radius: 9px; background: #0e1116; padding: 10px 14px;
+      text-align: center; color: #f2f5f8; font-size: 14.5px; font-weight: 600; line-height: 1.22; cursor: pointer;
       box-shadow: 0 1px 0 rgba(0,0,0,0.4); transition: box-shadow .15s, background .15s; position: relative; }
     .station::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 9px 0 0 9px; background: var(--accent); }
     .station:hover { background: #141821; box-shadow: 0 0 0 1px var(--accent); }
-    .station.primary { font-size: 14.5px; font-weight: 700; padding: 11px 15px; }
+    .station.primary { font-size: 15.5px; font-weight: 700; padding: 12px 16px; }
     .station.sel { box-shadow: 0 0 0 2px #fff; }
-    .station .st-type { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #707983; font-weight: 700; margin-top: 3px; }
+    .station .st-type { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: #828d99; font-weight: 700; margin-top: 4px; }
     .lane-head { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11.5px; font-weight: 600;
       color: #99a1ab; pointer-events: none; text-align: center; line-height: 1.2; }
     .lane-head .lane-num { flex-shrink: 0; width: 17px; height: 17px; border-radius: 50%; background: #0c1a20;
       border: 1px solid #2b5566; color: var(--documented); font-size: 10px; font-weight: 700;
       display: inline-flex; align-items: center; justify-content: center; }
 
-    .drawer { background: var(--panel); border-top: 1px solid var(--line); height: 204px; transition: height .2s ease; display: flex; flex-direction: column; min-height: 0; }
-    .drawer.collapsed { height: 44px; }
-    .drawer-bar { display: flex; align-items: center; gap: 12px; padding: 0 22px; height: 44px; flex-shrink: 0; cursor: pointer; }
+    .drawer { background: var(--panel); border-top: 1px solid var(--line); height: 264px; display: flex; flex-direction: column; min-height: 0; position: relative; }
+    .drawer.collapsed { height: 44px !important; }
+    .drawer-resize { position: absolute; top: -3px; left: 0; right: 0; height: 9px; cursor: ns-resize; z-index: 8; }
+    .drawer-resize::after { content: ''; position: absolute; left: 50%; top: 3px; transform: translateX(-50%); width: 46px; height: 3px; border-radius: 3px; background: #2a2f37; transition: background .15s; }
+    .drawer-resize:hover::after { background: var(--documented); }
+    .drawer.collapsed .drawer-resize { display: none; }
+    .drawer-bar { display: flex; align-items: center; gap: 12px; padding: 0 24px; height: 40px; flex-shrink: 0; cursor: pointer; }
     .drawer-bar .grip { width: 34px; height: 4px; border-radius: 3px; background: #2a2f37; }
     .drawer-bar .title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.09em; color: #7a828c; font-weight: 700; }
     .drawer-bar .count { font-size: 12px; color: #5b626b; font-variant-numeric: tabular-nums; }
     .drawer-bar .chev { margin-left: auto; color: #5b626b; font-size: 13px; }
-    .drawer-body { display: flex; gap: 26px; padding: 4px 22px 20px; overflow: auto; flex: 1; min-height: 0; }
+    .drawer-body { display: flex; gap: 30px; padding: 8px 24px 22px; overflow: auto; flex: 1; min-height: 0; }
     .drawer.collapsed .drawer-body { display: none; }
-    .col h4 { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.1em; color: #555b63; margin-bottom: 9px; }
+    .col h4 { font-size: 10px; text-transform: uppercase; letter-spacing: 0.11em; color: #6a727c; margin-bottom: 11px; }
     .col-shows { flex: 0 0 330px; }
     .col-fields { flex: 0 0 250px; }
     .col-sel { flex: 1; min-width: 0; border-left: 1px solid var(--line); padding-left: 24px; }
-    .shows-text { font-size: 12.5px; color: #b6bcc4; line-height: 1.6; margin-bottom: 11px; }
-    .legend-line { font-size: 11px; color: #707983; line-height: 1.7; }
+    .shows-text { font-size: 13.5px; color: #c5ccd5; line-height: 1.62; margin-bottom: 13px; }
+    .legend-line { font-size: 11.5px; color: #838c96; line-height: 1.75; }
     .type-key { display: flex; flex-wrap: wrap; gap: 5px 13px; margin-top: 11px; }
     .type-key .tk { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: #9aa0a8; }
     .type-key .tk .c { width: 10px; height: 10px; border-radius: 3px; border: 1px solid; flex-shrink: 0; }
-    .layer-note { font-size: 11px; color: #5b626b; line-height: 1.5; margin-top: 11px; font-style: italic; }
+    .layer-note { font-size: 11.5px; color: #6c737d; line-height: 1.55; margin-top: 13px; font-style: italic; }
     .layer-note b { color: #828c97; font-weight: 600; font-style: normal; }
     .ln { display: inline-block; width: 20px; height: 0; vertical-align: middle; margin-right: 4px; }
     .ln.doc { border-top: 2.5px solid var(--documented); }
     .ln.auth { border-top: 2.5px dashed var(--authorized); }
     .ln.inf { border-top: 2.5px dotted var(--inferred); }
-    .idx-item { display: flex; align-items: center; gap: 8px; padding: 5px 8px; margin: 2px 0; border-radius: 6px; font-size: 12.5px; color: #aab0b8; cursor: pointer; }
+    .idx-item { display: flex; align-items: center; gap: 8px; padding: 6px 9px; margin: 2px 0; border-radius: 6px; font-size: 13.5px; color: #b9bfc7; cursor: pointer; }
     .idx-item:hover { background: #15181d; color: #e6eaef; }
     .idx-item.on { background: #14171c; color: #fff; }
     .idx-item .chip { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
     .idx-group { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: #4b535c; margin: 9px 0 3px; }
     .idx-off { font-size: 12px; color: #5b626b; padding: 3px 8px; }
 
-    .sel-placeholder { color: #b6bcc4; font-size: 12.5px; line-height: 1.6; }
+    .sel-placeholder { color: #c2c9d2; font-size: 13.5px; line-height: 1.62; }
     .sel-placeholder b { color: #d6dae0; }
     .badge { display: inline-block; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 9px; border-radius: 4px; margin-bottom: 9px; }
     .badge.documented { background: #08222e; color: var(--documented); }
     .badge.authorized { background: #241902; color: var(--authorized); }
     .badge.inferred   { background: #1a1030; color: var(--inferred); }
     .badge.speculative{ background: #15171b; color: #8b929b; }
-    .sel h2 { font-size: 15.5px; color: #fff; margin-bottom: 5px; font-weight: 600; }
-    .sel h2 .verb { color: #5b626b; font-weight: 400; }
-    .sel .plain { font-size: 12.5px; color: #c4cad2; line-height: 1.55; margin-bottom: 5px; }
-    .sel .why { font-size: 12px; color: #8b929b; line-height: 1.55; margin-bottom: 11px; }
-    .sel .why b { color: #aab0b8; font-weight: 600; }
+    .sel h2 { font-family: var(--serif); font-size: 18px; color: #fff; margin-bottom: 7px; font-weight: 600; line-height: 1.25; }
+    .sel h2 .verb { color: #69707a; font-weight: 400; font-style: italic; }
+    .sel .plain { font-size: 14px; color: #d3d9e0; line-height: 1.55; margin-bottom: 6px; }
+    .sel .why { font-size: 12.5px; color: #a3aab3; line-height: 1.55; margin-bottom: 12px; }
+    .sel .why b { color: #b6bcc4; font-weight: 600; }
     .sel-grid { display: flex; gap: 22px; align-items: flex-start; }
     .sel-meta { flex: 0 0 290px; }
     .sel-receipts { flex: 1; min-width: 0; }
     .field { margin-bottom: 10px; }
     .field .k { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.09em; color: #5b626b; margin-bottom: 4px; }
-    .field .v { font-size: 12.5px; color: #d2d7dd; line-height: 1.5; }
+    .field .v { font-size: 13.5px; color: #d8dde3; line-height: 1.52; }
     .authby { display:inline-block; font-size: 11px; color: var(--authorized); background: #1c1407; border:1px solid #5a4516; border-radius: 5px; padding: 3px 8px; }
     .contest { border-left: 2px solid var(--authorized); padding-left: 10px; }
     .contest strong { color: #c6ccd4; font-weight: 600; }
     .receipt-row { display: flex; gap: 11px; overflow-x: auto; padding-bottom: 6px; }
     .receipt { flex: 0 0 285px; background: #0c0e12; border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
     .receipt .kind { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--authorized); margin-bottom: 6px; }
-    .receipt .basis { font-size: 11.5px; color: #aeb4bc; line-height: 1.55; margin-bottom: 8px; }
+    .receipt .basis { font-size: 12.5px; color: #bdc4cc; line-height: 1.58; margin-bottom: 9px; }
     .receipt a { font-size: 11px; color: var(--documented); word-break: break-all; text-decoration: none; }
     .receipt a:hover { text-decoration: underline; }
     .receipt .ret { font-size: 10.5px; color: #5b626b; margin-top: 4px; }
@@ -205,7 +213,7 @@
   // ---- fixed editorial layout: PLACE the spine into the frame, sized to the container ----
   // x = even column per visible stage (semantic order); y = stacked, centered, within frame.
   // No fitView, no pan/zoom — the whole sentence fits by construction.
-  const NODE_H = 56, TOP = 64, BOT = 26;
+  const NODE_H = 56, TOP = 52, BOT = 20;
   function editorialLayout(graph, active, W, H) {
     const ord = {}; graph.nodes.forEach((n,i)=>{ ord[n.data.id]=i; });
     const visEdges = graph.edges.filter(e => active.has(e.data.claim));
@@ -309,13 +317,24 @@
     </div>`;
   }
 
-  function Drawer({ graph, meta, sel, setSel, vCounts, collapsed, setCollapsed }) {
+  function Drawer({ graph, meta, sel, setSel, vCounts, collapsed, setCollapsed, drawerH, setDrawerH, resizing, setResizing }) {
     const collected = graph.nodes.filter(n => n.data.type === 'field_class' && n.data.lane === 'data');
     const inferredFields = graph.nodes.filter(n => n.data.type === 'field_class' && n.data.lane === 'inference');
     const types = [...new Set(graph.nodes.map(n => n.data.type))].filter(t => NODE[t]);
-    return html`<div class=${`drawer${collapsed?' collapsed':''}`}>
+    const startResize = (e) => {
+      e.preventDefault();
+      if (collapsed) setCollapsed(false);
+      setResizing(true);
+      const startY = e.clientY, startH = collapsed ? 264 : drawerH;
+      const move = (ev) => setDrawerH(Math.max(150, Math.min(window.innerHeight * 0.78, startH + (startY - ev.clientY))));
+      const up = () => { setResizing(false); window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); };
+      window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+    };
+    return html`<div class=${`drawer${collapsed?' collapsed':''}`}
+        style=${collapsed ? null : { height: drawerH+'px', transition: resizing ? 'none' : 'height .18s ease' }}>
+      <div class="drawer-resize" onPointerDown=${startResize} title="Drag to resize"></div>
       <div class="drawer-bar" onClick=${() => setCollapsed(!collapsed)}>
-        <span class="grip"></span><span class="title">${sel ? 'Selection' : 'What this map shows'}</span>
+        <span class="title">${sel ? 'Selection' : 'What this map shows'}</span>
         <span class="count">${vCounts.nodes} nodes · ${vCounts.edges} edges shown</span>
         <span class="chev">${collapsed?'▴':'▾'}</span>
       </div>
@@ -359,6 +378,8 @@
     const [active, setActive] = useState(new Set(['documented']));
     const [sel, setSel] = useState(null);
     const [collapsed, setCollapsed] = useState(false);
+    const [drawerH, setDrawerH] = useState(288);
+    const [resizing, setResizing] = useState(false);
     const [size, setSize] = useState({ w: Math.max(800, (window.innerWidth||1200) - 0), h: 460 });
     const stageRef = useRef(null);
 
@@ -437,7 +458,8 @@
         </${ReactFlow}>
       </div>
       <${Drawer} graph=${graph} meta=${meta} sel=${sel} setSel=${setSel} vCounts=${vCounts}
-                 collapsed=${collapsed} setCollapsed=${setCollapsed} />
+                 collapsed=${collapsed} setCollapsed=${setCollapsed}
+                 drawerH=${drawerH} setDrawerH=${setDrawerH} resizing=${resizing} setResizing=${setResizing} />
     </div>`;
   }
 

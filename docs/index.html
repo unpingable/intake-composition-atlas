@@ -16,7 +16,10 @@
   <meta name="twitter:title" content="Intake Composition Atlas">
   <meta name="twitter:description" content="A typed, receipt-backed map of how narrow federal intake surfaces compose into a broader identity and decision graph.">
   <meta name="twitter:image" content="https://unpingable.github.io/intake-composition-atlas/og-image.png">
+  <link rel="preconnect" href="https://fonts.bunny.net">
+  <link rel="stylesheet" href="https://fonts.bunny.net/css?family=newsreader:400,500,600&display=swap">
   <style>
+    :root { --serif: 'Newsreader', Georgia, 'Times New Roman', serif; }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -24,8 +27,8 @@
       display: flex; flex-direction: column; align-items: center;
     }
     .container { max-width: 880px; width: 100%; padding: 64px 24px; }
-    h1 { font-size: 34px; font-weight: 700; color: #fff; letter-spacing: -0.02em; margin-bottom: 14px; }
-    .thesis { font-size: 17px; color: #888; line-height: 1.65; margin-bottom: 40px; max-width: 660px; }
+    h1 { font-family: var(--serif); font-size: 38px; font-weight: 600; color: #fff; letter-spacing: -0.01em; margin-bottom: 14px; }
+    .thesis { font-family: var(--serif); font-size: 18px; color: #9aa0a8; line-height: 1.6; margin-bottom: 40px; max-width: 680px; }
     .claimkey { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 40px; }
     .ck { background: #111; border: 1px solid #222; border-radius: 8px; padding: 16px 14px; }
     .ck .dot { width: 26px; height: 0; border-top-width: 3px; border-top-style: solid; margin-bottom: 10px; }
@@ -44,7 +47,7 @@
       padding: 3px 8px; border-radius: 4px; margin-bottom: 12px; }
     .tag-active { background: #1a1200; color: #f5a623; }
     .tag-recurring { background: #001a2e; color: #4fc3f7; }
-    .case h3 { font-size: 18px; font-weight: 600; color: #fff; line-height: 1.3; margin-bottom: 8px; }
+    .case h3 { font-family: var(--serif); font-size: 20px; font-weight: 600; color: #fff; line-height: 1.25; margin-bottom: 8px; }
     .case p { font-size: 13.5px; color: #999; line-height: 1.55; margin-bottom: 14px; }
     .case-go { font-size: 13px; font-weight: 600; color: #4fc3f7; }
     @media (max-width: 640px) { .cases { grid-template-columns: 1fr; } }

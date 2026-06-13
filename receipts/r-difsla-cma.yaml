@@ -11,5 +11,7 @@ basis: >
   information returns (e.g. Form 1099) and returns unearned-income records; SSA uses the result
   to verify SSI (Title XVI) eligibility and correct benefit amounts. FY2023 cost-benefit:
   ~$74.5M projected SSI benefit from overpayments recovered and ongoing payments corrected.
-  (Paraphrase: the SSA-hosted PDF blocks automated retrieval; facts corroborated by the SSA CMA
-  index and IRS IRM 11.3.29.)
+  Retrieval note: the source is a public PDF accessible to human review at the URL above;
+  automated fetch returned HTTP 403, so this basis is PARAPHRASED and no direct quote was
+  extracted by tooling. Facts corroborated against the SSA CMA index and IRS IRM 11.3.29
+  ([[r-difsla-irm]]). "Fetch failed" is not "source unreviewed."

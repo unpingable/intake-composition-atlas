@@ -4,33 +4,50 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Intake Composition Atlas</title>
-  <meta name="description" content="A typed, receipt-backed map of how narrow federal intake surfaces compose into a broader identity and decision graph — every edge labeled by what kind of claim it is.">
+  <meta name="description" content="You can see the form. You can't see the join. A receipt-backed map of how a federal form's data gets matched, shared, and fed into decisions you can't inspect.">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Intake Composition Atlas">
-  <meta property="og:description" content="What is proven, what is permitted, what is possible — edge by edge.">
+  <meta property="og:title" content="You can see the form. You can't see the join.">
+  <meta property="og:description" content="A receipt-backed map of how narrow federal intake surfaces compose into decisions people can't inspect or contest — every link labeled by how sure we are.">
   <meta property="og:url" content="https://unpingable.github.io/intake-composition-atlas/">
   <meta property="og:image" content="https://unpingable.github.io/intake-composition-atlas/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Intake Composition Atlas">
-  <meta name="twitter:description" content="A typed, receipt-backed map of how narrow federal intake surfaces compose into a broader identity and decision graph.">
+  <meta name="twitter:title" content="You can see the form. You can't see the join.">
+  <meta name="twitter:description" content="A receipt-backed map of how federal intake composes into decisions you can't inspect — every link labeled by how sure we are.">
   <meta name="twitter:image" content="https://unpingable.github.io/intake-composition-atlas/og-image.png">
   <link rel="preconnect" href="https://fonts.bunny.net">
   <link rel="stylesheet" href="https://fonts.bunny.net/css?family=newsreader:400,500,600&display=swap">
   <style>
-    :root { --serif: 'Newsreader', Georgia, 'Times New Roman', serif; }
+    :root { --serif: 'Newsreader', Georgia, 'Times New Roman', serif; --cy: #4fc3f7; }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background: #0a0a0a; color: #e0e0e0; min-height: 100vh;
       display: flex; flex-direction: column; align-items: center;
     }
-    .container { max-width: 880px; width: 100%; padding: 64px 24px; }
-    h1 { font-family: var(--serif); font-size: 38px; font-weight: 600; color: #fff; letter-spacing: -0.01em; margin-bottom: 14px; }
-    .thesis { font-family: var(--serif); font-size: 18px; color: #9aa0a8; line-height: 1.6; margin-bottom: 40px; max-width: 680px; }
-    .claimkey { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 40px; }
-    .ck { background: #111; border: 1px solid #222; border-radius: 8px; padding: 16px 14px; }
+    .container { max-width: 900px; width: 100%; padding: 60px 24px 56px; }
+    .kicker { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; color: #5b6470; margin-bottom: 20px; }
+    h1 { font-family: var(--serif); font-size: 44px; font-weight: 600; color: #fff; letter-spacing: -0.015em; line-height: 1.08; margin-bottom: 20px; }
+    .dek { font-family: var(--serif); font-size: 19px; color: #b6bdc7; line-height: 1.5; margin-bottom: 30px; max-width: 720px; }
+
+    /* dead-simple 3-beat visual: the whole gospel in one glance */
+    .flow3 { display: flex; align-items: stretch; gap: 10px; margin-bottom: 34px; }
+    .beat { flex: 1; background: #111418; border: 1px solid #222; border-radius: 11px; padding: 16px 16px; display: flex; flex-direction: column; gap: 9px; }
+    .beat .bn { width: 23px; height: 23px; border-radius: 50%; background: #0c1a20; border: 1px solid #2b5566; color: var(--cy);
+      font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .beat .bt { font-size: 15.5px; color: #e9edf2; font-weight: 600; line-height: 1.3; }
+    .beat-out { border-color: #3a2330; background: #150d11; }
+    .beat-out .bn { background: #241016; border-color: #5a2a3a; color: #ef6a8a; }
+    .beat-out .bt { color: #f1c2cd; }
+    .barrow { align-self: center; color: #39414c; font-size: 22px; flex-shrink: 0; }
+    @media (max-width: 620px) { .flow3 { flex-direction: column; } .barrow { transform: rotate(90deg); } }
+
+    .refused { font-size: 14.5px; color: #b0b6c0; line-height: 1.6; border-left: 2px solid #5a4516; padding: 3px 0 3px 15px; margin-bottom: 22px; max-width: 720px; }
+    .refused strong { color: #f5a623; font-weight: 600; }
+
+    .claimkey { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 48px; }
+    .ck { background: #111; border: 1px solid #222; border-radius: 8px; padding: 15px 14px; }
     .ck .dot { width: 26px; height: 0; border-top-width: 3px; border-top-style: solid; margin-bottom: 10px; }
     .ck-documented .dot { border-color: #4fc3f7; }
     .ck-authorized .dot { border-color: #f5a623; border-top-style: dashed; }
@@ -38,6 +55,7 @@
     .ck-speculative .dot { border-color: #555; border-top-style: dotted; }
     .ck h3 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #fff; margin-bottom: 6px; }
     .ck p { font-size: 12px; color: #888; line-height: 1.5; }
+
     .cases-h { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #666; margin-bottom: 16px; }
     .cases { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
     .case { display: block; background: #111; border: 1px solid #222; border-radius: 10px; padding: 22px 22px 18px;
@@ -50,33 +68,51 @@
     .case h3 { font-family: var(--serif); font-size: 20px; font-weight: 600; color: #fff; line-height: 1.25; margin-bottom: 8px; }
     .case p { font-size: 13.5px; color: #999; line-height: 1.55; margin-bottom: 14px; }
     .case-go { font-size: 13px; font-weight: 600; color: #4fc3f7; }
-    @media (max-width: 640px) { .cases { grid-template-columns: 1fr; } }
     .caption { font-size: 13px; color: #666; margin-top: 14px; font-style: italic; }
-    footer { font-size: 12px; color: #555; line-height: 1.7; margin-top: 48px; border-top: 1px solid #1a1a1a; padding-top: 20px; }
+
+    .method { margin-top: 44px; border-top: 1px solid #1a1a1a; padding-top: 18px; }
+    .method summary { font-size: 13px; color: #888; cursor: pointer; font-weight: 600; list-style: none; }
+    .method summary::before { content: '▸ '; color: #555; }
+    .method[open] summary::before { content: '▾ '; }
+    .method .body { font-size: 13px; color: #7c828c; line-height: 1.7; margin-top: 12px; max-width: 740px; }
+    .method .body a { color: #9aa0a8; }
+
+    footer { font-size: 12px; color: #555; line-height: 1.7; margin-top: 30px; }
     footer a { color: #888; }
-    @media (max-width: 640px) { .claimkey { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .claimkey { grid-template-columns: repeat(2, 1fr); } .cases { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Intake Composition Atlas</h1>
-    <div class="thesis">
-      Populations exposed to inferences and decisions composed <em>outside their effective
-      contestation surface.</em> Narrow federal intake surfaces — a portal, a single form —
-      compose into a broader identity and decision graph. This is a typed, receipt-backed map of
-      that composition: every edge carries exactly one claim type and a citation to a public
-      record. Sibling to the
-      <a href="https://github.com/unpingable/grid-dependency-atlas" style="color:#4fc3f7">Grid Dependency Atlas</a>.
+    <div class="kicker">Intake Composition Atlas</div>
+    <h1>You can see the form.<br>You can't see the join.</h1>
+    <div class="dek">
+      A federal form looks small — a few fields, one purpose. But the same identifiers can be
+      matched, shared, and fed into decisions across agencies, into a record you can't inspect or
+      contest. This atlas maps that composition, one public receipt at a time.
+    </div>
+
+    <div class="flow3">
+      <div class="beat"><span class="bn">1</span><span class="bt">You submit one form</span></div>
+      <div class="barrow">&rarr;</div>
+      <div class="beat"><span class="bn">2</span><span class="bt">Agencies can join the records</span></div>
+      <div class="barrow">&rarr;</div>
+      <div class="beat beat-out"><span class="bn">3</span><span class="bt">Decisions happen out of view</span></div>
+    </div>
+
+    <div class="refused">
+      <strong>What this refuses to claim:</strong> that any secret or unlawful use exists, or anyone's
+      intent. It maps only what public records show — and labels every link by how sure we are:
     </div>
 
     <div class="claimkey">
       <div class="ck ck-documented"><div class="dot"></div><h3>Documented</h3><p>A public record says the flow exists.</p></div>
-      <div class="ck ck-authorized"><div class="dot"></div><h3>Authorized</h3><p>An instrument permits it; no evidence it occurs.</p></div>
+      <div class="ck ck-authorized"><div class="dot"></div><h3>Authorized</h3><p>A law permits it; no evidence it occurs.</p></div>
       <div class="ck ck-inferred"><div class="dot"></div><h3>Inferred</h3><p>Composition makes it derivable.</p></div>
       <div class="ck ck-speculative"><div class="dot"></div><h3>Speculative</h3><p>Incentive analysis only. Hidden by default.</p></div>
     </div>
 
-    <h2 class="cases-h">Cases</h2>
+    <h2 class="cases-h">The cases</h2>
     <div class="cases">
       <a class="case" href="graph/?case=trump-accounts">
         <span class="case-tag tag-active">Active · new intake surface</span>
@@ -91,11 +127,24 @@
         <span class="case-go">Open case &rarr;</span>
       </a>
     </div>
-    <div class="caption">Each case is a documented-path graphic. Toggle layers to see what is permitted and what is possible — that delta is the finding.</div>
+    <div class="caption">Each case is a documented-path graphic. Toggle the weaker layers to see what's permitted, then what's possible — that delta is the finding.</div>
+
+    <details class="method">
+      <summary>What this is, precisely</summary>
+      <div class="body">
+        Populations exposed to inferences and decisions composed <em>outside their effective
+        contestation surface.</em> A typed, receipt-backed map of federal intake composition: every
+        edge carries exactly one claim type and a citation to a public record. Doctrine —
+        no edge without a receipt; signed is not witnessed; inferred edges show their derivation;
+        no PII; public surfaces only; absence recorded as absence, not concealment. Sibling to the
+        <a href="https://github.com/unpingable/grid-dependency-atlas">Grid Dependency Atlas</a>.
+        Method, receipts, and linter are in the
+        <a href="https://github.com/unpingable/intake-composition-atlas">repository</a>.
+      </div>
+    </details>
 
     <footer>
       The people who bear the consequences cannot see the join.<br>
-      No edge without a receipt. Signed is not witnessed. No PII. Public surfaces only.<br>
       <a href="https://github.com/unpingable/intake-composition-atlas">Source</a> · Apache 2.0
     </footer>
   </div>
